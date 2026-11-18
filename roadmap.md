@@ -721,3 +721,6 @@
 
 - [x] Speed pass: Google Sans no longer blocks first paint; unused fonts removed; landing chunk starts early; Arabic font only for Arabic landing.
 - [ ] Split the 500KB app stylesheet so the website does not download app styles (larger refactor).
+
+- [ ] Light theme: pure white page backgrounds (no grey)
+- [ ] Translate remaining English text on home/settings (Arabic + other languages)

@@ -1,0 +1,108 @@
+/*
+ * Light theme for the Ceyo app screens (home rows, settings, chat, bot editor).
+ * The base sheets are dark-first with hand-set colors, so this layer remaps
+ * them only when html[data-theme="light"]. Load it after ceyo.css and
+ * settings-polish.css.
+ */
+html[data-theme="light"] .agent-hub.ceyo-page,
+html[data-theme="light"] .gx-apps,
+html[data-theme="light"] .gx-create {
+  --st-bg: #f3f3f5;
+  --st-card: #ffffff;
+  --st-card-2: #ececef;
+  --st-line: rgba(0, 0, 0, .08);
+  --st-ink: #1c1c1e;
+  --st-muted: #6b6b70;
+  --st-faint: #9a9aa0;
+  --st-danger: #e0382d;
+  --ceyo-page-bg: #f3f3f5;
+  --ceyo-card: #ffffff;
+  --ceyo-card-hover: #ececef;
+  --ceyo-secondary: #6b6b70;
+  --ceyo-danger: #e0382d;
+  color-scheme: light;
+}
+html[data-theme="light"] .ceyo-page:not(.ceyo-plans):not(.subscription-page),
+html[data-theme="light"] .ceyo-page:not(.ceyo-plans):not(.subscription-page) .ceyo-scroll { background: #f3f3f5 !important; color: #1c1c1e; }
+html[data-theme="light"] .ceyo-row,
+html[data-theme="light"] .ceyo-row-label strong { color: #1c1c1e; }
+html[data-theme="light"] .ceyo-page .ceyo-bottom-search { background: #ffffff; }
+html[data-theme="light"] .ceyo-switch i,
+html[data-theme="light"] .ceyo-brand-orb i { background: #ffffff; }
+html[data-theme="light"] .ceyo-usage-manage { border-top-color: rgba(0, 0, 0, .08); color: #1c1c1e; }
+html[data-theme="light"] .agent-hub .ceyo-scroll .ceyo-tabs button[data-active="true"],
+html[data-theme="light"] .ceyo-memory-add,
+html[data-theme="light"] .ceyo-permission-head > button { background: #e4e4e8; color: #1c1c1e; }
+html[data-theme="light"] .ceyo-theme-grid > button[data-active="true"],
+html[data-theme="light"] .ceyo-surface-grid > button[data-active="true"] { color: #1c1c1e; }
+html[data-theme="light"] .ceyo-theme-grid > button[data-active="true"] > span,
+html[data-theme="light"] .ceyo-surface-grid > button[data-active="true"] > span,
+html[data-theme="light"] .agent-hub.ceyo-page .ceyo-theme-grid button[data-active="true"] > span,
+html[data-theme="light"] .agent-hub.ceyo-page .ceyo-surface-grid button[data-active="true"] > span { border-color: #1c1c1e; color: #1c1c1e; }
+html[data-theme="light"] .agent-hub.ceyo-page .ceyo-input:focus { border-color: rgba(0, 0, 0, .3); }
+
+/* Primary buttons: white-on-dark becomes dark-on-light */
+html[data-theme="light"] .st-btn,
+html[data-theme="light"] .agent-hub.ceyo-page .st-btn,
+html[data-theme="light"] .st-chip[data-tone="primary"],
+html[data-theme="light"] .agent-hub.ceyo-page .st-chip[data-tone="primary"],
+html[data-theme="light"] .agent-hub.ceyo-page .ceyo-vault-tabs button[data-active="true"],
+html[data-theme="light"] .agent-hub.ceyo-page .ceyo-fb-send { background: #1c1c1e !important; color: #ffffff !important; }
+html[data-theme="light"] .st-btn:disabled,
+html[data-theme="light"] .agent-hub.ceyo-page .st-btn:disabled,
+html[data-theme="light"] .agent-hub.ceyo-page .ceyo-fb-send:disabled { background: #e4e4e8 !important; color: #9a9aa0 !important; }
+
+/* Home list */
+html[data-theme="light"] .hub-row-title strong { color: #1c1c1e; }
+html[data-theme="light"] .hub-row-title time { color: #8a8a90; }
+html[data-theme="light"] .hub-apps-menu button { color: #1c1c1e; }
+html[data-theme="light"] .hub-apps-menu button svg { color: #6b6b70; }
+html[data-theme="light"] .hub-apps-menu button + button { border-top-color: rgba(0, 0, 0, .06); }
+
+/* Apps, bot editor and pickers */
+html[data-theme="light"] .gx-apps { background: #f3f3f5 !important; color: #1c1c1e; }
+html[data-theme="light"] .gx-create:not(.ob-bot *) { background: #f3f3f5 !important; color: #1c1c1e; }
+html[data-theme="light"] .gx-sheet { background: #ffffff; }
+html[data-theme="light"] .gx-round { background: #ffffff; border-color: rgba(0, 0, 0, .1); color: #1c1c1e; }
+html[data-theme="light"] .gx-chips button,
+html[data-theme="light"] .gx-pill { background: #e4e4e8 !important; color: #1c1c1e !important; }
+html[data-theme="light"] .gx-bottom-search input,
+html[data-theme="light"] .gx-pick,
+html[data-theme="light"] .gx-opt,
+html[data-theme="light"] .agent-hub .gx-opt,
+html[data-theme="light"] .agent-hub .gx-voice .cx-card > button { color: #1c1c1e; }
+html[data-theme="light"] .gx-logo-lg { background: #ffffff; border-color: rgba(0, 0, 0, .1); }
+html[data-theme="light"] .gx-name,
+html[data-theme="light"] .agent-hub .gx-create .gx-name { background: #ffffff !important; border-color: rgba(0, 0, 0, .1) !important; color: #1c1c1e !important; -webkit-text-fill-color: #1c1c1e; }
+html[data-theme="light"] .gx-create-cta[data-variant="outline"] { background: #ffffff; border-color: rgba(0, 0, 0, .12); color: #1c1c1e; }
+html[data-theme="light"] .gx-shapes button[data-active="true"] { border-color: #1c1c1e !important; background: #ececef !important; }
+html[data-theme="light"] .gx-colors button[data-active="true"],
+html[data-theme="light"] .gx-create:not(.ob-bot *) .gx-colors button[data-active="true"] { outline-color: #1c1c1e !important; }
+html[data-theme="light"] .gx-create-foot { background: #f3f3f5; }
+
+/* Chat */
+html[data-theme="light"] .cx-chat { --cx-bg: #ffffff; --cx-card: #f0f0f2; --cx-card2: #e6e6ea; --cx-line: rgba(0, 0, 0, .08); --cx-mute: #6b6b70; color: #1c1c1e; }
+html[data-theme="light"] .cx-circle,
+html[data-theme="light"] .cx-title-pill,
+html[data-theme="light"] .cx-pop button,
+html[data-theme="light"] .cx-composer textarea,
+html[data-theme="light"] .cx-find-input input,
+html[data-theme="light"] .cx-done,
+html[data-theme="light"] .cx-sheet-group button,
+html[data-theme="light"] .cx-card > button,
+html[data-theme="light"] .cx-members > div { color: #1c1c1e; }
+html[data-theme="light"] .cx-composer { background: #f0f0f2; border-color: rgba(0, 0, 0, .08); }
+html[data-theme="light"] .cx-queued,
+html[data-theme="light"] .cx-reply-chip,
+html[data-theme="light"] .cx-file-chip { background: #f0f0f2; color: #3a3a3c; }
+html[data-theme="light"] .cx-reaction { background: #e6e6ea; }
+html[data-theme="light"] .cx-sheet { background: #ffffff; }
+html[data-theme="light"] .cx-sheet-group button { border-bottom-color: rgba(0, 0, 0, .07); }
+html[data-theme="light"] .cx-emoji-grid button { background: #f0f0f2; color: #6b6b70; }
+html[data-theme="light"] .cx-sub,
+html[data-theme="light"] .cx-sub-head { background: #f3f3f5; color: #1c1c1e; }
+html[data-theme="light"] .cx-pencil { background: #ffffff; border-color: rgba(0, 0, 0, .12); color: #1c1c1e; }
+html[data-theme="light"] .cx-field { background: #ffffff; border-color: rgba(0, 0, 0, .08); color: #1c1c1e; }
+html[data-theme="light"] .cx-pill-btn,
+html[data-theme="light"] .cx-seg button[data-active="true"],
+html[data-theme="light"] .cx-wide-btn { background: #e4e4e8; color: #1c1c1e; }
