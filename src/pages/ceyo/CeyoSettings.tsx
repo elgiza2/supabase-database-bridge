@@ -440,7 +440,7 @@ function Plans({ nav }: { nav: Nav }) {
         <div className="subscription-trial" role="note">
           <strong>{ar ? "تجربة مجانية ٣ أيام" : "3-day free trial"}</strong>
           {web ? (
-            <span>{ar ? "اربط بطاقتك الأول (بنتأكد منها بدفع ١ جنيه) والتجربة تبدأ فورًا: لحد مليون توكن مجانًا في اليوم. معظم مميزات التطبيق مش شغالة في التجربة، والقوة الكاملة مع الاشتراك. بعد ٣ أيام بيتخصم سعر الخطة تلقائيًا، وتقدر تلغي في أي وقت قبلها." : "Link your card first (we check it with a 1 EGP payment) and the trial starts right away: up to 1,000,000 tokens free per day. Most app features are not available during the trial; full power comes with the subscription. After 3 days the plan is charged automatically. Cancel anytime before then."}</span>
+            <span>{ar ? "اربط بطاقتك (فحص ١ دولار) · مليون توكن في اليوم · ميزات محدودة · إلغاء في أي وقت" : "Link a card ($1 check) · 1M tokens a day · limited features · cancel anytime"}</span>
           ) : (
             <span>{ar ? "أول ٣ أيام مجانًا للمشترك الجديد. بعدها الاشتراك بيتجدد تلقائيًا بالسعر الظاهر، وتقدر تلغي في أي وقت قبل ما التجربة تخلص من غير ما تدفع حاجة." : "New subscribers get the first 3 days free. After that, the plan renews automatically at the displayed price. Cancel anytime before the trial ends and you pay nothing."}</span>
           )}
@@ -453,7 +453,7 @@ function Plans({ nav }: { nav: Nav }) {
         {localPrices.error && <Button variant="ghost" onClick={localPrices.retry}>{ar ? "تعذر تحميل السعر · إعادة المحاولة" : "Price unavailable · Retry"}</Button>}
         {localPrices.approximate && localPrices.ready && <p className="subscription-legal">{ar ? "سعر محلي تقريبي؛ المبلغ النهائي يُعرض عند الدفع." : "Approximate local price; final amount shown at checkout."}</p>}
         {canTrial && !current && <Button variant="ghost" className="subscription-submit" disabled={!localPrices.ready} onClick={() => setTrialPaying(true)}>{ar ? "ابدأ التجربة المجانية ٣ أيام" : "Start 3-day free trial"}</Button>}
-        <Button variant="ghost" className={canTrial && !current ? undefined : "subscription-submit"} disabled={current || !localPrices.ready} onClick={() => setPaying(true)}>{current ? ar ? "الخطة الحالية" : "Current plan" : canTrial ? ar ? "أو اشترك دلوقتي" : "Or subscribe now" : ar ? "اشترك" : "Subscribe"}</Button>
+        <Button variant="ghost" className={canTrial && !current ? "subscription-secondary" : "subscription-submit"} disabled={current || !localPrices.ready} onClick={() => setPaying(true)}>{current ? ar ? "الخطة الحالية" : "Current plan" : canTrial ? ar ? "أو اشترك دلوقتي" : "Or subscribe now" : ar ? "اشترك" : "Subscribe"}</Button>
         <p className="subscription-legal">{ar ? "تُجدد الاشتراكات تلقائيًا حتى الإلغاء. يمكنك الإلغاء في أي وقت. " : "Subscriptions renew automatically until cancelled. Cancel anytime. "}<a href="/subscription-terms">{ar ? "شروط الاشتراك" : "Subscription terms"}</a></p>
       </footer>
       {paying && <Suspense fallback={null}><CheckoutSheet tier={p.id} name={p.name} interval={yearly ? "yearly" : "monthly"} onClose={() => setPaying(false)} /></Suspense>}

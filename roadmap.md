@@ -6,6 +6,8 @@
 - [x] Remove the "Try free for 3 days" line from the sign-in/sign-up screen (verified in browser).
 - [x] Web 3-day trial starts only after a 1 EGP Kashier card check that saves the card; 1,000,000 tokens/day during the trial; "most features limited, full power with subscription" copy; automatic charge at trial end and each period (3 daily retries), cancellable on the plans page.
 - [x] Plan prices shown in each customer's local currency (indicative), charged in EGP through Kashier.
+- [x] Voice call button must open the call on first tap (web + Android).
+- [x] Pricing page: tidy the 3-day trial block layout; trial card check = $1 (EGP equivalent).
 - [ ] Real Kashier test: confirm the card-save field name and that the saved-card charge succeeds (needs a real card on the live site).
 
 ## Power-button assistant with live Vapi voice — 2026-11-16

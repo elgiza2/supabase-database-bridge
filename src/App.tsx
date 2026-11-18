@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CostConfirmationHost } from "@/components/billing/CostConfirmationHost";
+import { useCalls } from "@/lib/calls/callStore";
 import { PlayPurchaseRecovery } from "@/components/billing/PlayPurchaseRecovery";
 import { Toaster } from "@/components/ui/sonner";
 import PageViewTracker from "@/components/analytics/PageViewTracker";
@@ -33,7 +34,14 @@ import { lazyWithRetry } from "@/lib/lazyWithRetry";
 import { loadTikTokPixel, trackTikTokFunnelEvent } from "@/lib/analytics/tiktokPixel";
 
 /** Watches background jobs / agent runs and notifies the user when they finish. */
-const CallHost = lazyWithRetry(() => import("@/components/calls/CallHost"));
+const loadCallHost = () => import("@/components/calls/CallHost");
+const CallHost = lazyWithRetry(loadCallHost);
+/** Resets on every new call, so one failed call can never block the next call button tap. */
+function CallHostBoundary() {
+  const { active } = useCalls();
+  useEffect(() => { void loadCallHost().catch(() => {}); }, []);
+  return <ErrorBoundary silent resetKey={active?.key ?? "idle"}><CallHost /></ErrorBoundary>;
+}
 const BackgroundJobNotifier = lazyWithRetry(
   () => import("@/lib/notifications/BackgroundJobNotifier"),
 );
@@ -189,8 +197,11 @@ const App = () => {
                       <ErrorBoundary silent><CostConfirmationHost /></ErrorBoundary>
                       <ErrorBoundary silent><CeyoConfirmHost /></ErrorBoundary>
                       <ErrorBoundary silent><BackgroundJobNotifier /></ErrorBoundary>
-                      {currentUserId && <ErrorBoundary silent><CallHost /></ErrorBoundary>}
                       {currentUserId && <ErrorBoundary silent><PlayPurchaseRecovery userId={currentUserId} /></ErrorBoundary>}
+                    </Suspense>
+                    {/* Calls get their own boundary so a slow sibling or an earlier failure never swallows the first tap. */}
+                    <Suspense fallback={null}>
+                      {currentUserId && <CallHostBoundary />}
                     </Suspense>
 
                     <Suspense fallback={<LazyFallback />}>

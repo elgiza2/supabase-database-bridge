@@ -56,12 +56,12 @@ export async function createKashierOrder(userId: string, tier: string, interval:
   };
 }
 
-/** Card check that starts the one-time web trial: 1 EGP, card saved so the plan can be charged when the trial ends. */
-export const TRIAL_CHECK_EGP = 1;
+/** Card check that starts the one-time web trial: $1 (charged as its EGP equivalent), card saved for the charge when the trial ends. */
+export const TRIAL_CHECK_USD = 1;
 export async function startKashierTrial(userId: string, tier: string, interval: string, origin: string) {
   if (priceOf(tier, interval) === null) throw new Error("This plan is not available");
   const { merchantId, apiKey } = await keys();
-  const amount = TRIAL_CHECK_EGP;
+  const amount = await usdToEgp(TRIAL_CHECK_USD);
   const currency = "EGP";
   const orderId = `ceyo_trial_${crypto.randomUUID().replace(/-/g, "")}`;
   const { error } = await db().rpc("begin_card_trial", { p_user: userId, p_order: orderId, p_tier: tier, p_interval: interval, p_amount: amount });

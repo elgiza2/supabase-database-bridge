@@ -23,7 +23,7 @@ async function sign(data: Record<string, unknown>) {
 describe("Card-first web trial", () => {
   beforeEach(() => rpc.mockClear());
 
-  it("a paid 1 EGP card check starts the trial with the saved card and never grants a plan", async () => {
+  it("a paid $1 card check starts the trial with the saved card and never grants a plan", async () => {
     order.current = { id: "ceyo_trial_1", amount: 1, currency: "EGP", status: "pending", method: "trial_card" };
     const data = { merchantOrderId: "ceyo_trial_1", status: "SUCCESS", amount: "1", currency: "EGP", cardDataToken: "tok_123", maskedCard: "411111******1234", signatureKeys: ["merchantOrderId", "status", "amount", "currency"] };
     const res = await handleKashierWebhook(JSON.stringify({ event: "pay", data }), await sign(data));

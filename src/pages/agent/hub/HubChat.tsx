@@ -568,7 +568,7 @@ export function HubChat({
         </button>
         <div className="cx-head-actions" data-calls={!group}>
           {!group && <div className="cx-head-calls">
-            <Button variant="ghost" type="button" className="cx-hcall" aria-label={ar ? "مكالمة صوتية" : "Voice call"} title={ar ? "مكالمة صوتية" : "Voice call"} onClick={() => { setMenuOpen(false); calls.start({ kind: "voice", agent, agentIds: agents.map((a) => a.id), conversationId: sessionId }); try { navigator.vibrate?.(15); } catch {} unlockCallAudio(); }}><Phone size={19} strokeWidth={1.9} /></Button>
+            <Button variant="ghost" type="button" className="cx-hcall" aria-label={ar ? "مكالمة صوتية" : "Voice call"} title={ar ? "مكالمة صوتية" : "Voice call"} onClick={() => { unlockCallAudio(); setMenuOpen(false); calls.start({ kind: "voice", agent, agentIds: agents.map((a) => a.id), conversationId: sessionId }); try { navigator.vibrate?.(15); } catch {} }}><Phone size={19} strokeWidth={1.9} /></Button>
           </div>}
           <button type="button" className="cx-circle cx-glass cx-head-menu" aria-label="Menu" title={ar ? "المزيد" : "More"} aria-haspopup="menu" aria-expanded={menuOpen} onClick={() => setMenuOpen((o) => !o)}><MoreHorizontal size={20} /></button>
         </div>

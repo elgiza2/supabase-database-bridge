@@ -36,7 +36,7 @@ const money = (amount: number, currency: string) => {
 };
 const digits = (v: string, n: number) => v.replace(/\D/g, "").slice(0, n);
 
-/** `trial`: web only — link a card with a 1 EGP check to start the 3-day free trial; the plan is charged when it ends. */
+/** `trial`: web only — link a card with a $1 check to start the 3-day free trial; the plan is charged when it ends. */
 export function CheckoutSheet({ tier, name, interval, onClose, trial = false }: { tier: Tier; name: string; interval: BillingInterval; onClose: () => void; trial?: boolean }) {
   const usd = priceOf(tier, interval) ?? 0;
   const ar = false;
@@ -198,7 +198,7 @@ export function CheckoutSheet({ tier, name, interval, onClose, trial = false }: 
         <Field label={ar ? "تاريخ الانتهاء" : "Expiry"}><input required inputMode="numeric" autoComplete="cc-exp" value={card.exp.replace("/", " / ")} onChange={(e) => { const d = digits(e.target.value, 4); setCard({ ...card, exp: d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d }); }} placeholder="MM / YY" /></Field>
         <Field label="CVV"><input required type="password" inputMode="numeric" autoComplete="cc-csc" value={card.cvv} onChange={(e) => setCard({ ...card, cvv: digits(e.target.value, 4) })} placeholder="•••" /></Field>
       </div>
-      {trial && <p className="cbox-note" role="note">We check your card with a 1 EGP payment and your 3-day free trial starts right away. Most features are limited during the trial; full power comes with the subscription. After 3 days, Ceyo {name} is charged {total} automatically. Cancel anytime before then and you pay nothing more.</p>}
+      {trial && <p className="cbox-note" role="note">We check your card with a $1 payment and your 3-day free trial starts right away. Most features are limited during the trial; full power comes with the subscription. After 3 days, Ceyo {name} is charged {total} automatically. Cancel anytime before then and you pay nothing more.</p>}
       {errorBox}<Button variant="ghost" type="submit" disabled={busy} className="cbox-cta">{busy ? <Loader2 className="cbox-spin" /> : trial ? "Start free trial" : `Subscribe · ${total}`}</Button>
       <p className="cbox-security"><ShieldCheck /> Secure payment by Kashier</p>
     </form>
