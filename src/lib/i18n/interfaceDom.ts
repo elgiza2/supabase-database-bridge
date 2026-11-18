@@ -1,7 +1,7 @@
 import { translateExactText, type AuthLang } from "@/lib/authI18n";
 
 // Translate interface controls only; user messages, code and editable text remain untouched.
-const CONTROL = "button, [role=button], label, [role=tab], nav, h1, h2, h3, [data-interface-text]";
+const CONTROL = "button, [role=button], label, [role=tab], [role=menuitem], nav, h1, h2, h3, h4, p, small, strong, span, li, time, option, [data-interface-text]";
 const PRIVATE = "[data-no-translate], [contenteditable], textarea, pre, code, iframe, .chat-message, .message-content, .markdown-body";
 export function startInterfaceTranslation(language: AuthLang): () => void {
   const originals = new Map<Text, { original: string; rendered: string }>();

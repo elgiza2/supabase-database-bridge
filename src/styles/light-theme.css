@@ -8,7 +8,7 @@
 html.light,
 html.light body,
 html.light #root {
-  background-color: #f3f3f5 !important;
+  background-color: #ffffff !important;
   color: var(--ink-1);
   color-scheme: light;
 }
@@ -247,7 +247,7 @@ html.light .brand-logo-shine {
 /* Settings canvas: soft grey page in light mode so the white cards read as
    separate surfaces (dark mode keeps the standard background). */
 .settings-canvas-bg { background-color: hsl(var(--background)); }
-html.light .settings-canvas-bg { background-color: #f3f3f5; }
+html.light .settings-canvas-bg { background-color: #ffffff; }
 
 /* ── Chat transcript legibility in light mode ────────────────
    Two legacy dark-only rules paint assistant prose white

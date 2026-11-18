@@ -429,7 +429,7 @@
 
 /* Light theme: same layout, white surfaces and dark ink. */
 html[data-theme="light"] .agent-hub {
-  --hub-bg: oklch(0.985 0 0);
+  --hub-bg: oklch(1 0 0);
   --hub-surface: oklch(0.94 0 0);
   --hub-surface-raised: oklch(0.9 0 0);
   --hub-surface-soft: oklch(0.96 0 0);

@@ -4,8 +4,10 @@ import { EGYPTIAN_PAGES } from "./egyptianPages";
 import { EGYPTIAN_PAGES_2 } from "./egyptianPages2";
 import { EGYPTIAN_PAGES_3 } from "./egyptianPages3";
 import { EGYPTIAN_PAGES_4 } from "./egyptianPages4";
+import { EGYPTIAN_PAGES_5 } from "./egyptianPages5";
 
 const DICT: Record<string, string> = {
+  ...EGYPTIAN_PAGES_5,
   ...EGYPTIAN_DICT,
   ...EGYPTIAN_EXTRA,
   ...EGYPTIAN_PAGES,
@@ -75,6 +77,14 @@ const patterns: Array<[RegExp, (m: RegExpMatchArray) => string]> = [
     /^([A-Za-z]{3,9}) (\d{1,2}), (\d{4})$/,
     (m) => (MONTHS[m[1]] ? `${m[2]} ${MONTHS[m[1]]} ${m[3]}` : m[0]),
   ],
+  // "Nov 9" (list timestamps)
+  [/^([A-Za-z]{3,9}) (\d{1,2})$/, (m) => (MONTHS[m[1]] ? `${m[2]} ${MONTHS[m[1]]}` : m[0])],
+  // "Auto-review on · 0 rules" (permissions summary)
+  [/^Auto-review (on|off) · (\d+) rules?$/, (m) => `المراجعة التلقائية ${m[1] === "on" ? "شغالة" : "مقفولة"} · ${m[2]} قاعدة`],
+  // "Free trial · 2d left"
+  [/^Free trial · (\d+)d left$/, (m) => `تجربة مجانية · فاضل ${m[1]} يوم`],
+  // "Open Dev" (row aria-labels)
+  [/^Open (.+)$/, (m) => `افتح ${DICT[m[1]] || m[1]}`],
   // "800 points to go — about 80 more friends."
   [
     /^(\d+) points to go — about (\d+) more friends\.$/,

@@ -7,23 +7,23 @@
 html[data-theme="light"] .agent-hub.ceyo-page,
 html[data-theme="light"] .gx-apps,
 html[data-theme="light"] .gx-create {
-  --st-bg: #f3f3f5;
-  --st-card: #ffffff;
-  --st-card-2: #ececef;
+  --st-bg: #ffffff;
+  --st-card: #f4f4f6;
+  --st-card-2: #eaeaee;
   --st-line: rgba(0, 0, 0, .08);
   --st-ink: #1c1c1e;
   --st-muted: #6b6b70;
   --st-faint: #9a9aa0;
   --st-danger: #e0382d;
-  --ceyo-page-bg: #f3f3f5;
-  --ceyo-card: #ffffff;
+  --ceyo-page-bg: #ffffff;
+  --ceyo-card: #f4f4f6;
   --ceyo-card-hover: #ececef;
   --ceyo-secondary: #6b6b70;
   --ceyo-danger: #e0382d;
   color-scheme: light;
 }
 html[data-theme="light"] .ceyo-page:not(.ceyo-plans):not(.subscription-page),
-html[data-theme="light"] .ceyo-page:not(.ceyo-plans):not(.subscription-page) .ceyo-scroll { background: #f3f3f5 !important; color: #1c1c1e; }
+html[data-theme="light"] .ceyo-page:not(.ceyo-plans):not(.subscription-page) .ceyo-scroll { background: #ffffff !important; color: #1c1c1e; }
 html[data-theme="light"] .ceyo-row,
 html[data-theme="light"] .ceyo-row-label strong { color: #1c1c1e; }
 html[data-theme="light"] .ceyo-page .ceyo-bottom-search { background: #ffffff; }
@@ -60,8 +60,8 @@ html[data-theme="light"] .hub-apps-menu button svg { color: #6b6b70; }
 html[data-theme="light"] .hub-apps-menu button + button { border-top-color: rgba(0, 0, 0, .06); }
 
 /* Apps, bot editor and pickers */
-html[data-theme="light"] .gx-apps { background: #f3f3f5 !important; color: #1c1c1e; }
-html[data-theme="light"] .gx-create:not(.ob-bot *) { background: #f3f3f5 !important; color: #1c1c1e; }
+html[data-theme="light"] .gx-apps { background: #ffffff !important; color: #1c1c1e; }
+html[data-theme="light"] .gx-create:not(.ob-bot *) { background: #ffffff !important; color: #1c1c1e; }
 html[data-theme="light"] .gx-sheet { background: #ffffff; }
 html[data-theme="light"] .gx-round { background: #ffffff; border-color: rgba(0, 0, 0, .1); color: #1c1c1e; }
 html[data-theme="light"] .gx-chips button,
@@ -78,7 +78,7 @@ html[data-theme="light"] .gx-create-cta[data-variant="outline"] { background: #f
 html[data-theme="light"] .gx-shapes button[data-active="true"] { border-color: #1c1c1e !important; background: #ececef !important; }
 html[data-theme="light"] .gx-colors button[data-active="true"],
 html[data-theme="light"] .gx-create:not(.ob-bot *) .gx-colors button[data-active="true"] { outline-color: #1c1c1e !important; }
-html[data-theme="light"] .gx-create-foot { background: #f3f3f5; }
+html[data-theme="light"] .gx-create-foot { background: #ffffff; }
 
 /* Chat */
 html[data-theme="light"] .cx-chat { --cx-bg: #ffffff; --cx-card: #f0f0f2; --cx-card2: #e6e6ea; --cx-line: rgba(0, 0, 0, .08); --cx-mute: #6b6b70; color: #1c1c1e; }
@@ -100,9 +100,12 @@ html[data-theme="light"] .cx-sheet { background: #ffffff; }
 html[data-theme="light"] .cx-sheet-group button { border-bottom-color: rgba(0, 0, 0, .07); }
 html[data-theme="light"] .cx-emoji-grid button { background: #f0f0f2; color: #6b6b70; }
 html[data-theme="light"] .cx-sub,
-html[data-theme="light"] .cx-sub-head { background: #f3f3f5; color: #1c1c1e; }
+html[data-theme="light"] .cx-sub-head { background: #ffffff; color: #1c1c1e; }
 html[data-theme="light"] .cx-pencil { background: #ffffff; border-color: rgba(0, 0, 0, .12); color: #1c1c1e; }
 html[data-theme="light"] .cx-field { background: #ffffff; border-color: rgba(0, 0, 0, .08); color: #1c1c1e; }
 html[data-theme="light"] .cx-pill-btn,
 html[data-theme="light"] .cx-seg button[data-active="true"],
 html[data-theme="light"] .cx-wide-btn { background: #e4e4e8; color: #1c1c1e; }
+
+/* Bot characters keep a soft outline so a white bot stays visible on white. */
+html[data-theme="light"] .hub-primary-character > :first-child { filter: drop-shadow(0 0 1px rgba(0, 0, 0, .22)) drop-shadow(0 8px 20px rgba(0, 0, 0, .08)); }
