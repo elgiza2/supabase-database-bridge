@@ -390,7 +390,8 @@ function Plans({ nav }: { nav: Nav }) {
   const queryClient = useQueryClient();
   // The web trial (card first) is web-only; the Android app uses Google Play's own trial.
   const web = !isPlayApp() && !(typeof window !== "undefined" && (window as unknown as { MegsyAndroid?: unknown }).MegsyAndroid);
-  const canTrial = web && !!usage.data && !usage.data.isPaid && !usage.data.trialUsed;
+  // Android: Google Play runs its own 3-day trial. Web: one card-linked trial per account.
+  const canTrial = !usage.data?.isPaid && (!web || !usage.data?.trialUsed);
   const [trialPaying, setTrialPaying] = useState(false);
   const cardBilling = useCardBilling();
   const autoCharge = web && cardBilling.data && (cardBilling.data.status === "active" || cardBilling.data.status === "charging") ? cardBilling.data : null;
@@ -424,7 +425,6 @@ function Plans({ nav }: { nav: Nav }) {
     <div className="agent-hub ceyo-page subscription-page" data-no-translate dir={ar ? "rtl" : "ltr"}>
       <header className="subscription-header"><span className="subscription-brand">Ceyo</span><Button variant="ghost" size="icon" aria-label={ar ? "إغلاق" : "Close"} onClick={() => { if (window.history.state?.idx > 0) navigate(-1); else nav("/"); }}><X/></Button></header>
       <h1 className="subscription-title">{ar ? <>اشتراك واحد.<br/>الوصول إلى كل شيء.</> : <>One subscription.<br/>Access to everything.</>}</h1>
-      <p className="subscription-trial-badge">{ar ? "جرّب ٣ أيام مجانًا" : "Try free for 3 days"}</p>
       <main className="subscription-content">
         <div className="subscription-tabs" role="tablist" aria-label="Plans">
           {PLANS.map((x,i) => <Button variant="ghost" key={x.id} role="tab" aria-selected={i === tab} aria-controls="subscription-details" onClick={() => chooseTab(i)}>{x.name}</Button>)}
@@ -445,11 +445,11 @@ function Plans({ nav }: { nav: Nav }) {
         {localPrices.error && <Button variant="ghost" onClick={localPrices.retry}>{ar ? "تعذر تحميل السعر · إعادة المحاولة" : "Price unavailable · Retry"}</Button>}
         {localPrices.approximate && localPrices.ready && <p className="subscription-legal">{ar ? "سعر محلي تقريبي؛ المبلغ النهائي يُعرض عند الدفع." : "Approximate local price; final amount shown at checkout."}</p>}
         {canTrial && !current ? <>
-          <Button variant="ghost" className="subscription-submit subscription-trial-cta" disabled={!localPrices.ready} onClick={() => setTrialPaying(true)}>
+          <Button variant="ghost" className="subscription-submit subscription-trial-cta" disabled={!localPrices.ready} onClick={() => (web ? setTrialPaying(true) : setPaying(true))}>
             <span className="subscription-trial-cta-main">{ar ? "ابدأ ٣ أيام مجانًا" : "Start 3 days free"}</span>
             <span className="subscription-trial-cta-sub" dir="auto">{(() => { const v = yearly ? localPrices.yearly : localPrices.monthly; const price = v !== null && localPrices.currency ? formatLocalPrice(v, localPrices.currency, ar ? "ar" : "en") : ""; return ar ? `بعدها ${price}${yearly ? "/سنة" : "/شهر"} · إلغاء في أي وقت` : `then ${price}${yearly ? "/yr" : "/mo"} · cancel anytime`; })()}</span>
           </Button>
-          <Button variant="ghost" className="subscription-secondary" disabled={!localPrices.ready} onClick={() => setPaying(true)}>{ar ? "اشترك دلوقتي من غير تجربة" : "Subscribe now without trial"}</Button>
+          {web && <Button variant="ghost" className="subscription-secondary" disabled={!localPrices.ready} onClick={() => setPaying(true)}>{ar ? "اشترك دلوقتي من غير تجربة" : "Subscribe now without trial"}</Button>}
         </> : <Button variant="ghost" className="subscription-submit" disabled={current || !localPrices.ready} onClick={() => setPaying(true)}>{current ? ar ? "الخطة الحالية" : "Current plan" : ar ? "اشترك" : "Subscribe"}</Button>}
         <p className="subscription-legal">{ar ? "تُجدد الاشتراكات تلقائيًا حتى الإلغاء. يمكنك الإلغاء في أي وقت. " : "Subscriptions renew automatically until cancelled. Cancel anytime. "}<a href="/subscription-terms">{ar ? "شروط الاشتراك" : "Subscription terms"}</a></p>
       </footer>
