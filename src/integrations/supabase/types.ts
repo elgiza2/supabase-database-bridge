@@ -654,6 +654,54 @@ export type Database = {
         }
         Relationships: []
       }
+      card_billing: {
+        Row: {
+          card_agreement_id: string | null
+          card_masked: string | null
+          card_token: string | null
+          check_order_id: string | null
+          created_at: string
+          failures: number
+          interval: string
+          last_error: string | null
+          next_charge_at: string | null
+          status: string
+          tier: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          card_agreement_id?: string | null
+          card_masked?: string | null
+          card_token?: string | null
+          check_order_id?: string | null
+          created_at?: string
+          failures?: number
+          interval: string
+          last_error?: string | null
+          next_charge_at?: string | null
+          status?: string
+          tier: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          card_agreement_id?: string | null
+          card_masked?: string | null
+          card_token?: string | null
+          check_order_id?: string | null
+          created_at?: string
+          failures?: number
+          interval?: string
+          last_error?: string | null
+          next_charge_at?: string | null
+          status?: string
+          tier?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       channel_deliveries: {
         Row: {
           created_at: string
@@ -1788,6 +1836,27 @@ export type Database = {
         }
         Relationships: []
       }
+      trial_token_usage: {
+        Row: {
+          tokens: number
+          updated_at: string
+          usage_day: string
+          user_id: string
+        }
+        Insert: {
+          tokens?: number
+          updated_at?: string
+          usage_day?: string
+          user_id: string
+        }
+        Update: {
+          tokens?: number
+          updated_at?: string
+          usage_day?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -1880,6 +1949,17 @@ export type Database = {
         Returns: undefined
       }
       agent_usage_status: { Args: never; Returns: Json }
+      begin_card_trial: {
+        Args: {
+          p_amount: number
+          p_interval: string
+          p_order: string
+          p_tier: string
+          p_user: string
+        }
+        Returns: boolean
+      }
+      cancel_my_card_billing: { Args: never; Returns: boolean }
       charge_agent_usage: {
         Args: { p_operation_key: string; p_user_id: string }
         Returns: Json
@@ -1929,6 +2009,30 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      claim_due_card_charges: {
+        Args: never
+        Returns: {
+          card_agreement_id: string | null
+          card_masked: string | null
+          card_token: string | null
+          check_order_id: string | null
+          created_at: string
+          failures: number
+          interval: string
+          last_error: string | null
+          next_charge_at: string | null
+          status: string
+          tier: string
+          updated_at: string
+          user_id: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "card_billing"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       cleanup_account_data: { Args: { p_user: string }; Returns: undefined }
       complete_onboarding: {
         Args: {
@@ -1966,6 +2070,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      finish_card_charge: {
+        Args: { p_error: string; p_ok: boolean; p_user: string }
+        Returns: undefined
+      }
       finish_routine_run: {
         Args: {
           p_metadata: Json
@@ -1985,7 +2093,9 @@ export type Database = {
       }
       is_people_member: { Args: { _thread: string }; Returns: boolean }
       leave_people_thread: { Args: { p_thread: string }; Returns: undefined }
+      my_card_billing: { Args: never; Returns: Json }
       my_people_threads: { Args: never; Returns: Json }
+      my_trial_tokens_today: { Args: never; Returns: number }
       open_bot_thread: {
         Args: { p_bot: string }
         Returns: {
@@ -2013,6 +2123,10 @@ export type Database = {
       read_channel_credential: { Args: { p_name: string }; Returns: string }
       read_runtime_credential: { Args: { p_name: string }; Returns: string }
       read_telegram_bot_token: { Args: never; Returns: string }
+      record_trial_tokens: {
+        Args: { p_tokens: number; p_user: string }
+        Returns: undefined
+      }
       reserve_free_video_call_minute: { Args: never; Returns: Json }
       save_bot_group: {
         Args: {
@@ -2055,6 +2169,15 @@ export type Database = {
       }
       settle_payment_order: {
         Args: { p_order: string; p_ref: string }
+        Returns: boolean
+      }
+      start_card_trial: {
+        Args: {
+          p_agreement: string
+          p_masked: string
+          p_order: string
+          p_token: string
+        }
         Returns: boolean
       }
       store_agentsky_api_key: { Args: { p_key: string }; Returns: undefined }
