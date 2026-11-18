@@ -109,3 +109,24 @@ html[data-theme="light"] .cx-wide-btn { background: #e4e4e8; color: #1c1c1e; }
 
 /* Bot characters keep a soft outline so a white bot stays visible on white. */
 html[data-theme="light"] .hub-primary-character > :first-child { filter: drop-shadow(0 0 1px rgba(0, 0, 0, .22)) drop-shadow(0 8px 20px rgba(0, 0, 0, .08)); }
+
+/* Plans page and checkout follow the light theme too. */
+html[data-theme="light"] {
+  --subscription-bg: #ffffff;
+  --subscription-surface: #f4f4f6;
+  --subscription-raised: #e9e9ed;
+  --subscription-selected: #ffffff;
+  --subscription-ink: #1c1c1e;
+  --subscription-muted: #6e6e73;
+  --subscription-line: #dcdce0;
+  --subscription-highlight: #6e6e73;
+  --subscription-choice-fill: #f4f4f6;
+  --subscription-inverse: #ffffff;
+  --checkout-bg: #ffffff;
+  --checkout-ink: #1c1c1e;
+  --checkout-line: #e2e2e6;
+  --checkout-muted: rgb(28 28 30 / 62%);
+  --checkout-hover: rgb(28 28 30 / 5%);
+}
+html[data-theme="light"] .ceyo-plans,
+html[data-theme="light"] .ceyo-page.subscription-page { background: var(--subscription-bg) !important; color: var(--subscription-ink); }

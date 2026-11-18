@@ -412,7 +412,8 @@ bunx vitest run
 ### Light theme and translation — 2026-11-18
 - Light theme now covers home, settings, Vault and chat with a pure white page background (src/styles/ceyo-light.css, loaded last). White bots keep a soft outline on white.
 - Translation: home and settings are no longer blocked from translation (chat bubbles still are); ~100 missing settings/home labels added for Egyptian Arabic and all 24 bundled languages; non-Arabic scanning now includes span/p/small/strong/li/time; Arabic handles short dates, permissions summary and trial countdown.
-- Verification: signed in as the test account and screenshotted home, settings and Vault in Arabic and settings in French in light mode; i18n/settings tests pass. Not checked: every screen in every language, Android app.
+- Sweep: plans page and payment sheet now follow light theme; ~400 more labels (account, plans, apps categories and featured app descriptions, memory import, feedback, agent computer, chat/group/bot-editor/checkout hints) added for all languages; the word DELETE stays literal in every language.
+- Verification: signed in as the test account and swept home, all 17 settings pages and a bot chat in Arabic and French in light mode (only same-in-French words remain), plus the group chat; i18n/settings tests pass. Not checked: onboarding, create menu, call screen, checkout steps, the 1,000 generated app descriptions (still English), Android app; the permissions summary line is translated only in Arabic.
 
 ### Continuing bot chat and Android repair — 2026-11-16
 - One owner-locked app thread per bot/group via open_bot_thread; paginated timeline includes prior app conversations, without deleting/moving any message or changing job/routine references. Channel chats remain isolated. Removed unused new-chat callback; assistant prompts continue the same bot.
