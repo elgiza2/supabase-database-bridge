@@ -67,7 +67,7 @@ const en: LandingCopy = {
     { q: "Can a bot work when I'm not in the app?", a: "Yes. Routines let a bot repeat a task every few minutes, daily or weekly and send the result to your chat." },
     { q: "Does Ceyo know my passwords?", a: "No. When a website needs a login, you sign in yourself on a secure screen, the bot never asks for your password." },
     { q: "Is there a phone app?", a: "Ceyo is available on the web now. The Android app is in closed testing and is not publicly available on Google Play yet." },
-    { q: "Is it free?", a: "Every new account gets a 3-day free trial. After that, you need a Plus, Pro or Ultra subscription to keep using Ceyo." },
+    { q: "Is it free?", a: "On the web, link a card to start a 3-day free trial with up to 1,000,000 tokens a day; most features are limited until you subscribe. After 3 days your plan is charged automatically unless you cancel." },
     { q: "Can it handle a whole project?", a: "Yes. Split a project between bots: one does the research and marketing, one writes the code, one makes the images and videos. Each works on its own computer at the same time." },
     { q: "Can bots really call people?", a: "Yes. Bots can make phone calls, and you can video call your bot face to face." },
   ],
@@ -126,7 +126,7 @@ const ar: LandingCopy = {
     { q: "الروبوت يقدر يشتغل وانا مش فاتح التطبيق؟", a: "أيوه. المهام المتكررة بتخلي الروبوت يكرر مهمة كل كام دقيقة أو كل يوم أو كل أسبوع ويبعتلك النتيجة في الشات." },
     { q: "Ceyo بيعرف كلمات السر بتاعتي؟", a: "لأ. لما موقع يحتاج تسجيل دخول، انت بتسجل بنفسك من شاشة آمنة، والروبوت عمره ما يطلب كلمة السر." },
     { q: "فيه تطبيق للموبايل؟", a: "أيوه، فيه تطبيق أندرويد، وتقدر تستخدمه كمان من أي متصفح." },
-    { q: "هو مجاني؟", a: "أي حساب جديد بياخد تجربة مجانية ٣ أيام. بعدها لازم تشترك في Plus أو Pro أو Ultra علشان تكمل." },
+    { q: "هو مجاني؟", a: "على الويب، اربط بطاقتك وابدأ تجربة مجانية ٣ أيام لحد مليون توكن في اليوم؛ معظم المميزات محدودة لحد ما تشترك. بعد ٣ أيام الخطة بتتخصم تلقائيًا إلا لو لغيت." },
   ],
 };
 
