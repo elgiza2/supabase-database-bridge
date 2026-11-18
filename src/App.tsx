@@ -5,6 +5,8 @@ import { BrowserRouter } from "react-router-dom";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CostConfirmationHost } from "@/components/billing/CostConfirmationHost";
+import { PlayPurchaseRecovery } from "@/components/billing/PlayPurchaseRecovery";
+import { Toaster } from "@/components/ui/sonner";
 import PageViewTracker from "@/components/analytics/PageViewTracker";
 import ErrorBoundary, { RouteErrorBoundary } from "@/components/common/ErrorBoundary";
 import TranslationWrapper from "@/components/common/TranslationWrapper";
@@ -181,12 +183,14 @@ const App = () => {
                     <ErrorBoundary silent><PageViewTracker /></ErrorBoundary>
                     <ErrorBoundary silent><ReminderWatcher /></ErrorBoundary>
                     <InternalLinkInterceptor />
+                    <Toaster position="top-center" />
 
                     <Suspense fallback={null}>
                       <ErrorBoundary silent><CostConfirmationHost /></ErrorBoundary>
                       <ErrorBoundary silent><CeyoConfirmHost /></ErrorBoundary>
                       <ErrorBoundary silent><BackgroundJobNotifier /></ErrorBoundary>
                       {currentUserId && <ErrorBoundary silent><CallHost /></ErrorBoundary>}
+                      {currentUserId && <ErrorBoundary silent><PlayPurchaseRecovery userId={currentUserId} /></ErrorBoundary>}
                     </Suspense>
 
                     <Suspense fallback={<LazyFallback />}>

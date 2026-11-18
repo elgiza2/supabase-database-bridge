@@ -35,6 +35,34 @@ public class CeyoPlayBillingPlugin extends Plugin implements PurchasesUpdatedLis
         });
     }
 
+    /** Returns this phone's Ceyo subscriptions that Google Play still marks unconfirmed, so the server can confirm them. */
+    @PluginMethod public void restore(PluginCall call) {
+        Runnable run = () -> client.queryPurchasesAsync(
+            QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.SUBS).build(),
+            (result, purchases) -> {
+                if (result.getResponseCode() != BillingClient.BillingResponseCode.OK) { call.reject("Google Play is unavailable"); return; }
+                JSArray list = new JSArray();
+                for (Purchase purchase : purchases) {
+                    if (purchase.getPurchaseState() != Purchase.PurchaseState.PURCHASED || purchase.isAcknowledged()) continue;
+                    JSObject item = new JSObject();
+                    item.put("purchaseToken", purchase.getPurchaseToken());
+                    item.put("productId", purchase.getProducts().isEmpty() ? "" : purchase.getProducts().get(0));
+                    list.put(item);
+                }
+                JSObject data = new JSObject();
+                data.put("purchases", list);
+                call.resolve(data);
+            });
+        if (client.isReady()) { run.run(); return; }
+        client.startConnection(new BillingClientStateListener() {
+            @Override public void onBillingSetupFinished(BillingResult result) {
+                if (result.getResponseCode() != BillingClient.BillingResponseCode.OK) { call.reject("Google Play is unavailable"); return; }
+                run.run();
+            }
+            @Override public void onBillingServiceDisconnected() { }
+        });
+    }
+
     private void query(String product, String account) {
         QueryProductDetailsParams params = QueryProductDetailsParams.newBuilder().setProductList(List.of(
             QueryProductDetailsParams.Product.newBuilder().setProductId(product).setProductType(BillingClient.ProductType.SUBS).build())).build();

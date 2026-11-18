@@ -1,3 +1,11 @@
+## Google Play confirmation, Android checkout card and web trial — 2026-11-18
+- [x] Server confirms (acknowledges) every verified Google Play subscription so Play stops showing "developer hasn't confirmed" and does not refund it (4 unit tests).
+- [x] Android app recovers earlier unconfirmed Play purchases at sign-in and before checkout (native `restore` added to CeyoPlayBillingPlugin).
+- [ ] Build and upload a new APK so the native restore reaches phones (owner).
+- [x] Android app never shows Ceyo's own checkout card; only Google Play's sheet plus a short message.
+- [x] Remove the "Try free for 3 days" line from the sign-in/sign-up screen (verified in browser).
+- [ ] Web 3-day trial: card linked first, 1M tokens/day, clear "limited features, full power with subscription" copy (waiting on owner's answers about the card check and charging after the trial).
+
 ## Power-button assistant with live Vapi voice — 2026-11-16
 - [x] Floating talk card over the current app (no full app) with a native two-way Vapi voice conversation, barge-in and loudspeaker/headset routing.
 - [x] Phone gets its own private voice key after sign-in; server endpoint opens the Vapi call with the primary bot's name and persona (tested end-to-end: real audio returned).

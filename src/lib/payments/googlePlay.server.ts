@@ -25,20 +25,51 @@ async function playToken() {
   return { token: json.access_token, pkg };
 }
 
-/** Verify the purchase belongs to this user's order, then settle it once. */
-export async function verifyPlayPurchase(userId: string, tier: Tier, interval: BillingInterval, purchaseToken: string) {
-  if (priceOf(tier, interval) === null) throw new Error("This plan is not available");
+type PlaySub = {
+  subscriptionState?: string;
+  acknowledgementState?: string;
+  lineItems?: { productId?: string }[];
+  externalAccountIdentifiers?: { obfuscatedExternalAccountId?: string };
+};
+
+const PLAN_OF = (productId: string): { tier: Tier; interval: BillingInterval } | null => {
+  const m = /^ceyo_(plus|pro|ultra)_(monthly|yearly)$/.exec(productId);
+  return m ? { tier: m[1] as Tier, interval: m[2] as BillingInterval } : null;
+};
+
+/** Google refunds subscriptions that are not acknowledged within 3 days and blocks plan changes until then. */
+async function acknowledge(pkg: string, token: string, productId: string, purchaseToken: string) {
+  const url = `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${pkg}/purchases/subscriptions/${encodeURIComponent(productId)}/tokens/${encodeURIComponent(purchaseToken)}:acknowledge`;
+  const res = await fetch(url, { method: "POST", headers: { authorization: `Bearer ${token}`, "content-type": "application/json" }, body: "{}" });
+  // 400 here means Play already considers it acknowledged; anything else must surface so it is retried.
+  if (!res.ok && res.status !== 400) throw new Error("Google Play could not confirm the purchase");
+}
+
+async function verifyAndSettle(userId: string, purchaseToken: string, expected?: { tier: Tier; interval: BillingInterval }) {
   const { token, pkg } = await playToken();
   const res = await fetch(`https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${pkg}/purchases/subscriptionsv2/tokens/${encodeURIComponent(purchaseToken)}`, { headers: { authorization: `Bearer ${token}` } });
   if (!res.ok) throw new Error("Purchase could not be verified");
-  const sub = (await res.json()) as { subscriptionState?: string; lineItems?: { productId?: string }[]; externalAccountIdentifiers?: { obfuscatedExternalAccountId?: string } };
+  const sub = (await res.json()) as PlaySub;
   const active = sub.subscriptionState === "SUBSCRIPTION_STATE_ACTIVE" || sub.subscriptionState === "SUBSCRIPTION_STATE_IN_GRACE_PERIOD";
-  const product = sub.lineItems?.some((l) => l.productId === playProductId(tier, interval));
-  if (!active || !product || sub.externalAccountIdentifiers?.obfuscatedExternalAccountId !== userId) throw new Error("Purchase could not be verified");
+  const productId = (sub.lineItems ?? []).map((l) => l.productId ?? "").find((id) => (expected ? id === playProductId(expected.tier, expected.interval) : PLAN_OF(id) !== null));
+  const plan = productId ? PLAN_OF(productId) : null;
+  if (!active || !productId || !plan || sub.externalAccountIdentifiers?.obfuscatedExternalAccountId !== userId) throw new Error("Purchase could not be verified");
+  if (sub.acknowledgementState !== "ACKNOWLEDGEMENT_STATE_ACKNOWLEDGED") await acknowledge(pkg, token, productId, purchaseToken);
   const orderId = `play_${(await sha(purchaseToken)).slice(0, 40)}`;
-  await db().from("payment_orders").upsert({ id: orderId, user_id: userId, tier, interval, amount: priceOf(tier, interval), currency: "USD", provider: "google_play" }, { onConflict: "id", ignoreDuplicates: true });
+  await db().from("payment_orders").upsert({ id: orderId, user_id: userId, tier: plan.tier, interval: plan.interval, amount: priceOf(plan.tier, plan.interval), currency: "USD", provider: "google_play" }, { onConflict: "id", ignoreDuplicates: true });
   await db().rpc("settle_payment_order", { p_order: orderId, p_ref: orderId });
   return { orderId };
+}
+
+/** Verify the purchase belongs to this user's order, confirm it with Google Play, then settle it once. */
+export async function verifyPlayPurchase(userId: string, tier: Tier, interval: BillingInterval, purchaseToken: string) {
+  if (priceOf(tier, interval) === null) throw new Error("This plan is not available");
+  return verifyAndSettle(userId, purchaseToken, { tier, interval });
+}
+
+/** Recover an earlier purchase the phone still holds (for example one whose confirmation failed). */
+export async function restorePlayPurchase(userId: string, purchaseToken: string) {
+  return verifyAndSettle(userId, purchaseToken);
 }
 
 async function sha(value: string) {

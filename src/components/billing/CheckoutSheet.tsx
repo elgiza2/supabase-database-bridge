@@ -1,5 +1,5 @@
 import { userErrorText } from "@/lib/errors";
-/** Subscribe popup: Kashier Direct API (card / Vodafone Cash, EGP) in Egypt, Dodo elsewhere, Google Play on Android. */
+/** Subscribe popup: Kashier Direct API (card / Vodafone Cash, EGP) on the web; on Android only Google Play's own sheet (no Ceyo card). */
 import { useEffect, useState } from "react";
 import { Check, Loader2, ShieldCheck, X } from "lucide-react";
 import { createPortal } from "react-dom";
@@ -14,6 +14,8 @@ import "@/styles/checkout-box.css";
 import { isPlayApp, purchasePlay } from "@/lib/native/playBilling";
 import { kashierCardPayload } from "@/lib/payments/kashierCard";
 import { getAuthState } from "@/lib/authStore";
+import { recoverPlayPurchases } from "@/lib/payments/playRestore";
+import { toast } from "sonner";
 
 type PlayApi = { purchase?: (json: string) => void };
 declare global { interface Window { ceyoPlayPurchase?: (token: string) => void } }
@@ -77,7 +79,12 @@ export function CheckoutSheet({ tier, name, interval, onClose }: { tier: Tier; n
       .then(setQuote).catch((e) => setError(userErrorText(e)));
   }, [tier, interval, androidBilling]);
 
-  const done = () => { setState("paid"); window.dispatchEvent(new Event(CREDITS_CHANGED_EVENT)); };
+  const done = () => {
+    window.dispatchEvent(new Event(CREDITS_CHANGED_EVENT));
+    // Android never shows Ceyo's own card: a short message, then back to the plans.
+    if (androidBilling) { toast.success(`Ceyo ${name} is now active`); onClose(); return; }
+    setState("paid");
+  };
 
   // Only the server (verified webhook, wallet reconcile or Dodo lookup) can mark the order paid.
   useEffect(() => {
@@ -95,7 +102,10 @@ export function CheckoutSheet({ tier, name, interval, onClose }: { tier: Tier; n
 
   const fail = (e: unknown) => {
     // Android: closing Google Play's own sheet just returns to the plans, with no extra card.
-    if (androidBilling && /cancel/i.test(String((e as Error)?.message ?? e))) { onClose(); return; }
+    if (androidBilling) {
+      if (!/cancel/i.test(String((e as Error)?.message ?? e))) toast.error(userErrorText(e));
+      onClose(); return;
+    }
     setState("error"); setError(userErrorText(e));
   };
 
@@ -105,6 +115,8 @@ export function CheckoutSheet({ tier, name, interval, onClose }: { tier: Tier; n
     if (playNative) {
       try {
         if (!data.user) throw new Error("Please sign in first");
+        // An earlier purchase Google Play still holds unconfirmed blocks new checkouts; confirm it first.
+        if ((await recoverPlayPurchases()) > 0) { done(); return; }
         const token = await purchasePlay(playProductId(tier, interval), data.user.id);
         await billing({ action: "play", tier, interval, purchaseToken: token });
         done();
@@ -196,8 +208,8 @@ export function CheckoutSheet({ tier, name, interval, onClose }: { tier: Tier; n
     </form>
   );
   if (typeof document === "undefined") return null;
-  // Android shows only Google Play's sheet; our box appears just for success or a real error.
-  if (androidBilling && state !== "paid" && state !== "error") return null;
+  // Android shows only Google Play's own sheet; results appear as a short message, never Ceyo's card.
+  if (androidBilling) return null;
   return createPortal(
     <section className="cbox-screen" dir="ltr" role="dialog" aria-modal="true" aria-label="Checkout" tabIndex={-1} onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}>
       <div className="cbox-wrap">

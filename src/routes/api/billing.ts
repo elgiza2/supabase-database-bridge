@@ -10,6 +10,7 @@ const Body = z.discriminatedUnion("action", [
   z.object({ action: z.literal("dodo"), ...plan, country: z.string().max(2).default("") }),
   z.object({ action: z.literal("dodo_check"), orderId: z.string().min(5).max(80) }),
   z.object({ action: z.literal("play"), ...plan, purchaseToken: z.string().min(10).max(4096) }),
+  z.object({ action: z.literal("play_restore"), purchaseToken: z.string().min(10).max(4096) }),
 ]);
 
 function countryOf(request: Request, tz: string, guess: (tz: string) => string | null) {
@@ -61,6 +62,10 @@ export const Route = createFileRoute("/api/billing")({ server: { handlers: {
         case "play": {
           const { verifyPlayPurchase } = await import("@/lib/payments/googlePlay.server");
           return Response.json(await verifyPlayPurchase(auth.userId, i.tier, i.interval, i.purchaseToken));
+        }
+        case "play_restore": {
+          const { restorePlayPurchase } = await import("@/lib/payments/googlePlay.server");
+          return Response.json(await restorePlayPurchase(auth.userId, i.purchaseToken));
         }
       }
     } catch (e) {
