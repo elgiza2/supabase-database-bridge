@@ -3,12 +3,14 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { priceOf, type BillingInterval, type Tier } from "./plans";
 import { DODO_PRODUCTS } from "./regions";
 import { PaymentsUnavailable } from "./kashier.server";
+import { runtimeCredential } from "@/lib/ceyo/runtimeCredentials.server";
 
 const db = () => supabaseAdmin as any;
 const base = () => ((process.env.DODO_MODE || "live") === "test" ? "https://test.dodopayments.com" : "https://live.dodopayments.com");
 
 async function dodo(path: string, init: RequestInit = {}) {
-  const key = process.env.DODO_PAYMENTS_API_KEY;
+  // Primary home is the Supabase Vault; the environment variable is only a fallback.
+  const key = (await runtimeCredential("CEYO_DODO_PAYMENTS_API_KEY").catch(() => null)) || process.env.DODO_PAYMENTS_API_KEY;
   if (!key) throw new PaymentsUnavailable("Dodo is not configured");
   const r = await fetch(`${base()}${path}`, { ...init, headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" } });
   const j = await r.json().catch(() => ({}));
