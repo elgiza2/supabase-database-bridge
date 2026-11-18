@@ -22,15 +22,18 @@ html, body { background-color: #000; margin: 0; }
 html[data-theme="dark"] { color-scheme: dark; }
 html[data-theme="dark"], html[data-theme="dark"] body { background-color: #000; }
 html[data-theme="dark"] #root { background-color: #000; }
+html[data-theme="light"] { color-scheme: light; }
+html[data-theme="light"], html[data-theme="light"] body, html[data-theme="light"] #root { background-color: #fff; }
 `;
 
 const THEME_BOOT_SCRIPT = `
 (function(){try{
-  var h=document.documentElement;
-  h.setAttribute("data-theme","dark");
-  h.classList.add("dark");
-  h.classList.remove("light");
-  h.style.colorScheme="dark";
+  var h=document.documentElement,m=localStorage.getItem("megsy_theme")||"dark",p=location.pathname;
+  var t=/^\/(auth|login|signin|sign-in|signup|sign-up|register|reset-password)(\/|$)/.test(p)?"dark":m==="system"?(matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light"):(m==="light"?"light":"dark");
+  h.setAttribute("data-theme",t);
+  h.classList.toggle("dark",t==="dark");
+  h.classList.toggle("light",t==="light");
+  h.style.colorScheme=t;
 }catch(e){}})();
 `;
 

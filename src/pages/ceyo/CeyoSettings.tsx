@@ -22,7 +22,8 @@ import "@/styles/agent-hub.css";
 import "@/styles/ceyo.css";
 import "@/styles/settings-polish.css";
 const CheckoutSheet = lazy(() => import("@/components/billing/CheckoutSheet").then((m) => ({ default: m.CheckoutSheet })));
-import { useUserLang } from "@/lib/authI18n";
+import { useUserLang, setUserLang, detectLang } from "@/lib/authI18n";
+import { normalizeAppLanguage } from "@/lib/i18n/bundledLocales";
 import "@/styles/subscriptions.css";
 import { getAuthState } from "@/lib/authStore";
 import { readPageState, writePageState } from "@/lib/pageStateCache";
@@ -226,7 +227,6 @@ function Main({ nav }: { nav: Nav }) {
       {hasPhoneAssistant() && <Group><Row label="Phone settings" sub="Voice, Hey Ceyo, driving mode, guards and permissions" onClick={() => nav("/settings/android")} /></Group>}
       <Group title="Agent">
         <Row label="Permissions" sub={permissionSummary(permissions)} onClick={() => nav("/settings/permissions")} />
-        <Row label="Phone calls" sub="Your mobile, agent numbers and call history" onClick={() => nav("/settings/phone")} />
         <Row label="Time Zone" value={tz} right={<span />} />
         <Row label="Agent Computer" onClick={() => nav("/settings/computer")} />
         <Row label="Manage your devices" onClick={() => nav("/settings/devices")} />
@@ -830,6 +830,8 @@ function Language({ nav }: { nav: Nav }) {
     if (!saveSetting("ceyo_language", code)) { toast.error("Could not save this preference on your device."); return; }
     setSelected(code);
     window.dispatchEvent(new CustomEvent("ceyo:language", { detail: code }));
+    const lang = code === "system" ? detectLang() : normalizeAppLanguage(code);
+    if (lang) void setUserLang(lang);
     toast.success("Language saved");
   };
   return (

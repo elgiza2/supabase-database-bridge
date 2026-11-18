@@ -47,9 +47,9 @@ export const prefersDark = (): boolean => {
 export const resolveTheme = (mode: ThemeMode, pathname: string): "light" | "dark" => {
   // Ceyo ships black-only for now: every screen paints the dark theme, and the
   // stored mode is kept only so the picker can remember a future preference.
-  void mode;
-  void pathname;
-  return "dark";
+  if (isAuthPath(pathname)) return "dark";
+  if (mode === "system") return prefersDark() ? "dark" : "light";
+  return mode;
 };
 
 /** Paint the resolved theme onto <html>. Safe to call repeatedly. */
