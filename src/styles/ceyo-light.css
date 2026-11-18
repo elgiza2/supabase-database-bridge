@@ -130,3 +130,50 @@ html[data-theme="light"] {
 }
 html[data-theme="light"] .ceyo-plans,
 html[data-theme="light"] .ceyo-page.subscription-page { background: var(--subscription-bg) !important; color: var(--subscription-ink); }
+
+/* Shared surface tokens (info pages, Vault, plans, chat previews, widgets). */
+html[data-theme="light"] {
+  --cv-page: #ffffff;
+  --cv-panel: #f4f4f6;
+  --cv-line: #e2e2e6;
+  --cv-ink: #1c1c1e;
+  --cv-muted: #6e6e73;
+  --cv-active: #e4e4e8;
+  --cv-pricing: #ffffff;
+  --cv-pricing-panel: #f4f4f6;
+  --cv-selected: #e6effc;
+}
+
+/* Home header avatar and bottom search bars. */
+html[data-theme="light"] .hub-user-avatar { color: #1c1c1e; }
+html[data-theme="light"] .ceyo-bottom-search,
+html[data-theme="light"] .ceyo-page .ceyo-bottom-search,
+html[data-theme="light"] .ceyo-vault .ceyo-bottom-search,
+html[data-theme="light"] .gx-bottom-search { background: #f4f4f6 !important; border-color: #e2e2e6 !important; color: #1c1c1e !important; }
+html[data-theme="light"] :is(.ceyo-bottom-search, .gx-bottom-search) :is(input, svg) { color: #1c1c1e !important; }
+html[data-theme="light"] :is(.ceyo-bottom-search, .gx-bottom-search) input::placeholder { color: #8e8e93; }
+html[data-theme="light"] .gx-count { background: #f4f4f6; border-color: #e2e2e6; color: #1c1c1e; }
+
+/* Chat: your own messages are a dark bubble with light text; round buttons are light. */
+html[data-theme="light"] .cx-bubble-user { background: #1c1c1e !important; color: #ffffff !important; }
+html[data-theme="light"] .cx-bubble-user :is(a, strong, span, p) { color: inherit; }
+html[data-theme="light"] .cx-composer .cx-circle:not([data-active="true"]) { background: #e4e4e8; color: #1c1c1e; }
+html[data-theme="light"] .cx-md code { background: rgba(0, 0, 0, .06); }
+html[data-theme="light"] .cx-md pre { background: #f4f4f6 !important; color: #1c1c1e; border: 1px solid #e2e2e6; }
+html[data-theme="light"] .cx-md :is(th, td) { border-bottom-color: rgba(0, 0, 0, .08); }
+html[data-theme="light"] .cx-md th { color: #1c1c1e; background: #f4f4f6 !important; }
+
+/* Home menus (+ and apps). */
+html[data-theme="light"] :is(.hub-plus-menu, .hub-apps-menu) { background: #ffffff !important; border-color: #e2e2e6 !important; box-shadow: 0 18px 40px rgba(0, 0, 0, .12) !important; }
+html[data-theme="light"] :is(.hub-plus-menu, .hub-apps-menu) button { color: #1c1c1e; }
+html[data-theme="light"] :is(.hub-plus-menu, .hub-apps-menu) button:hover { background: #f4f4f6; }
+
+/* Search screen. */
+html[data-theme="light"] .hub-search-overlay .hub-search-filters button { background: #f0f0f2 !important; color: #1c1c1e !important; }
+html[data-theme="light"] .hub-search-overlay .hub-search-filters button[data-active="true"] { background: #1c1c1e !important; color: #ffffff !important; }
+html[data-theme="light"] .hub-search-overlay .hub-search-bottom input { background: #f4f4f6 !important; border-color: #e2e2e6 !important; color: #1c1c1e !important; }
+html[data-theme="light"] .hub-search-overlay .hub-search-bottom .hub-icon-button { background: #f4f4f6 !important; border-color: #e2e2e6 !important; color: #1c1c1e !important; }
+html[data-theme="light"] .hub-search-overlay .hub-search-bottom > svg { color: #6e6e73; }
+
+/* Formatted answers and info pages. */
+html[data-theme="light"] .cx-md em { color: #6e6e73; }

@@ -511,4 +511,7 @@ export const EGYPTIAN_PAGES_5: Record<string, string> = {
   "Your mobile number": "رقم موبايلك",
   "Your photo": "صورتك",
   "t.me/Ceyois": "t.me/Ceyois",
+  "Bots": "البوتات",
+  "Group Chats": "الجروبات",
+  "Messages": "الرسايل",
 };
