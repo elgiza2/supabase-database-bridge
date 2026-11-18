@@ -40,7 +40,7 @@ type Nav = (to: string) => void;
 
 function Shell({ title, back, children, action, className = "" }: { title: string; back: () => void; children: ReactNode; action?: ReactNode; className?: string }) {
   return (
-    <div key={title} className={`agent-hub ceyo-page ${className}`} data-no-translate>
+    <div key={title} className={`agent-hub ceyo-page ${className}`}>
       <header className="ceyo-top">
         <Button variant="ghost" size="icon" type="button" className="gx-round" aria-label={title === "Settings" ? "Close" : "Back"} onClick={back}>
           {title === "Settings" ? <X size={20} /> : <ChevronLeft size={20} />}
@@ -831,7 +831,7 @@ function Language({ nav }: { nav: Nav }) {
     setSelected(code);
     window.dispatchEvent(new CustomEvent("ceyo:language", { detail: code }));
     const lang = code === "system" ? detectLang() : normalizeAppLanguage(code);
-    if (lang) void setUserLang(lang);
+    if (lang) void setUserLang(lang, { keepSystem: true });
     toast.success("Language saved");
   };
   return (

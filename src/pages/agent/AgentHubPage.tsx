@@ -488,7 +488,7 @@ export default function AgentHubPage({ demo = false }: { demo?: boolean }) {
   const contentOpen = content !== null;
 
   return (
-    <div className="agent-hub" data-content-open={contentOpen} dir={ar ? "rtl" : "ltr"} data-no-translate>
+    <div className="agent-hub" data-content-open={contentOpen} dir={ar ? "rtl" : "ltr"}>
       <SEOHead path="/" title={ar ? "Ceyo — بوتاتك وجروباتك" : "Ceyo — Your bots and groups"} description={ar ? "اتكلم مع Ceyo واعمل بوتات وجروبات ذكية لكل شغلك." : "Chat with Ceyo and create personal bots and coordinated groups for your work."} />
       {listContent}
       <main className="hub-content">{content || <section className="ceyo-desktop-welcome"><div aria-hidden="true">{primary && <BotAvatar agent={primary} size={104} state="idle" />}</div><h1>{primary ? `Hello, ${primary.name}` : "Ceyo"}</h1>{primary && <Button variant="neutral" className="ceyo-desktop-start" onClick={() => openChat("bot", primary.id)}>Start chatting</Button>}<Button variant="ghost" onClick={() => go({ new: "bot" })}><Plus size={18} />New bot</Button></section>}</main>

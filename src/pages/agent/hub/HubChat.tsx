@@ -637,7 +637,7 @@ export function HubChat({
                   {showDay && <p className="cx-day">{new Date(b.at || "").toDateString() === new Date().toDateString() ? (ar ? "النهارده " : "Today ") : ""}{time}</p>}
                   {b.role === "user" ? (
                     <div className="cx-row cx-row-user">
-                      <div className="cx-bubble cx-bubble-user" data-hit={hit} data-select={selectable === b.key} dir="auto" {...handlers}>
+                      <div data-no-translate className="cx-bubble cx-bubble-user" data-hit={hit} data-select={selectable === b.key} dir="auto" {...handlers}>
                         {b.partIndex === 0 && Array.isArray(b.turn.images) && b.turn.images.length > 0 && <span className="cx-user-images">{b.turn.images.map((src: string, k: number) => <img key={k} src={src} alt="" />)}</span>}
                         {b.turn.voiceOrigin === "recording" && b.turn.recordingId ? <VoiceMessage own text={b.text} recordingId={b.turn.recordingId} agentId={agent.id} agentIds={agents.map((a) => a.id)} settings={voiceSettings} ar={ar} /> : b.text.startsWith("> ") ? (() => { const [quote, ...rest] = b.text.split("\n\n"); return <><span className="cx-quote">{quote.slice(2)}</span><Highlight text={rest.join("\n\n")} q={q} /></>; })() : <CollapsibleText text={b.text} ar={ar}><Highlight text={b.text} q={q} /></CollapsibleText>}
                         {reaction && <em className="cx-reaction">{reaction}</em>}
@@ -651,7 +651,7 @@ export function HubChat({
                         {(group || b.partIndex === 0) && <span className="cx-author" dir="auto">{b.speaker?.name || title}</span>}
                         {b.lastPart && b.turn.cards?.filter((c: any) => c.kind === "plan").map((c: any) => <PlanCard key={c.id} title={c.title} steps={c.steps} lang={lang} />)}
                         {voiceReply && input ? <VoiceMessage text={b.text} recordingId={`${input.turn.recordingId || input.turnId}:${b.partIndex}`} agentId={speaker.id} agentIds={agents.map((a) => a.id)} settings={settings} ar={ar} /> : b.text && (
-                          <div className="cx-bubble cx-bubble-agent" data-hit={hit} data-select={selectable === b.key} dir="auto" {...handlers}>
+                          <div data-no-translate className="cx-bubble cx-bubble-agent" data-hit={hit} data-select={selectable === b.key} dir="auto" {...handlers}>
                             {q ? <p><Highlight text={b.text} q={q} /></p> : (
                               <FormattedAnswer text={b.text} decorate={decorateAnswer} onSend={sendAnswer} />
                             )}

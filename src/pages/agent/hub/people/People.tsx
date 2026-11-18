@@ -267,7 +267,7 @@ export function PeopleChat({ lang, threadId, agents, onBack }: { lang: HubLang; 
               {showDay && <p className="cx-day">{new Date(m.created_at).toDateString() === new Date().toDateString() ? (ar ? "النهارده " : "Today ") : ""}{time}</p>}
               {mine ? (
                 <div className="cx-row cx-row-user">
-                  <div className="cx-bubble cx-bubble-user" dir="auto">{m.content}</div>
+                  <div data-no-translate className="cx-bubble cx-bubble-user" dir="auto">{m.content}</div>
                   <span className="cx-time">{time}</span>
                 </div>
               ) : (
@@ -275,7 +275,7 @@ export function PeopleChat({ lang, threadId, agents, onBack }: { lang: HubLang; 
                   <div className="cx-avatar">{hit ? <BotAvatar agent={hit.agent} size={22} /> : <PersonAvatar person={person} size={22} />}</div>
                   <div className="cx-agent-body">
                     {isGroup && <span className="cx-author" dir="auto">{hit ? hit.bot.name : personLabel(person)}</span>}
-                    <div className="cx-bubble cx-bubble-agent" dir="auto">
+                    <div data-no-translate className="cx-bubble cx-bubble-agent" dir="auto">
                       {hit ? <FormattedAnswer text={m.content} onSend={(message) => { void send(message); }} /> : <p style={{ whiteSpace: "pre-wrap" }}>{m.content}</p>}
                     </div>
                   </div>

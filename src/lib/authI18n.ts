@@ -307,10 +307,15 @@ function emitChange(lang: AuthLang) {
 /** Persist the user's language choice everywhere (localStorage + profile). */
 export async function setUserLang(
   lang: AuthLang,
-  opts: { syncRemote?: boolean } = {},
+  opts: { syncRemote?: boolean; keepSystem?: boolean } = {},
 ): Promise<void> {
   if (!isSupportedLang(lang)) return;
   persistLangLocally(lang);
+  // Settings reads ceyo_language first; an explicit choice made elsewhere
+  // must replace it, except when Settings itself just picked "system".
+  try {
+    if (!(opts.keepSystem && localStorage.getItem("ceyo_language") === "system")) localStorage.setItem("ceyo_language", lang);
+  } catch { /* ignore */ }
   applyHtmlLang(lang);
   applyZoneForLang(lang);
   emitChange(lang);

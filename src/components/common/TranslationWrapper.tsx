@@ -31,7 +31,7 @@ const TranslationWrapper = ({ children }: TranslationWrapperProps) => {
     // A `/ar-eg` or `/en` route prefix wins over the stored preference.
     const routeLang = window.location.pathname.split("/").filter(Boolean)[0]?.toLowerCase();
     if (routeLang && isSupportedLang(routeLang) && routeLang !== getUserLang()) {
-      void setUserLang(routeLang, { syncRemote: false });
+      void setUserLang(routeLang, { syncRemote: false, keepSystem: true });
     } else {
       void initUserLang();
     }
@@ -39,7 +39,7 @@ const TranslationWrapper = ({ children }: TranslationWrapperProps) => {
       const code = (event as CustomEvent<string>).detail;
       if (code === "system") { void initUserLang(); return; }
       const language = normalizeAppLanguage(code || "");
-      if (language) void setUserLang(language, { syncRemote: false });
+      if (language) void setUserLang(language, { syncRemote: false, keepSystem: true });
     };
     window.addEventListener("ceyo:language", onLanguage);
     return () => window.removeEventListener("ceyo:language", onLanguage);
