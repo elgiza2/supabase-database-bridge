@@ -437,14 +437,6 @@ function Plans({ nav }: { nav: Nav }) {
         </section>
       </main>
       <footer className="subscription-footer">
-        <div className="subscription-trial" role="note">
-          <strong>{ar ? "تجربة مجانية ٣ أيام" : "3-day free trial"}</strong>
-          {web ? (
-            <span>{ar ? "اربط بطاقتك (فحص ١ دولار) · مليون توكن في اليوم · ميزات محدودة · إلغاء في أي وقت" : "Link a card ($1 check) · 1M tokens a day · limited features · cancel anytime"}</span>
-          ) : (
-            <span>{ar ? "أول ٣ أيام مجانًا للمشترك الجديد. بعدها الاشتراك بيتجدد تلقائيًا بالسعر الظاهر، وتقدر تلغي في أي وقت قبل ما التجربة تخلص من غير ما تدفع حاجة." : "New subscribers get the first 3 days free. After that, the plan renews automatically at the displayed price. Cancel anytime before the trial ends and you pay nothing."}</span>
-          )}
-        </div>
         {autoCharge && <p className="subscription-legal" role="status">{ar ? `خصم تلقائي ${autoCharge.nextChargeAt ? `يوم ${new Date(autoCharge.nextChargeAt).toLocaleDateString("ar")}` : ""}${autoCharge.cardLast4 ? ` من البطاقة المنتهية بـ ${autoCharge.cardLast4}` : ""}. ` : `Automatic charge${autoCharge.nextChargeAt ? ` on ${new Date(autoCharge.nextChargeAt).toLocaleDateString()}` : ""}${autoCharge.cardLast4 ? ` to the card ending ${autoCharge.cardLast4}` : ""}. `}<Button variant="link" className="h-auto p-0" onClick={() => void cancelAutoCharge()}>{ar ? "إلغاء الخصم التلقائي" : "Cancel automatic charge"}</Button></p>}
         <div className="subscription-intervals" role="group" aria-label="Billing interval">
           <Button variant="ghost" aria-pressed={!yearly} onClick={() => setYearly(false)}><strong dir="auto">{localPrices.monthly !== null && localPrices.currency ? formatLocalPrice(localPrices.monthly, localPrices.currency, ar ? "ar" : "en") : "…"}</strong><span>{ar ? "الفوترة شهريًا" : "Billed monthly"}</span></Button>
@@ -452,8 +444,13 @@ function Plans({ nav }: { nav: Nav }) {
         </div>
         {localPrices.error && <Button variant="ghost" onClick={localPrices.retry}>{ar ? "تعذر تحميل السعر · إعادة المحاولة" : "Price unavailable · Retry"}</Button>}
         {localPrices.approximate && localPrices.ready && <p className="subscription-legal">{ar ? "سعر محلي تقريبي؛ المبلغ النهائي يُعرض عند الدفع." : "Approximate local price; final amount shown at checkout."}</p>}
-        {canTrial && !current && <Button variant="ghost" className="subscription-submit" disabled={!localPrices.ready} onClick={() => setTrialPaying(true)}>{ar ? "ابدأ التجربة المجانية ٣ أيام" : "Start 3-day free trial"}</Button>}
-        <Button variant="ghost" className={canTrial && !current ? "subscription-secondary" : "subscription-submit"} disabled={current || !localPrices.ready} onClick={() => setPaying(true)}>{current ? ar ? "الخطة الحالية" : "Current plan" : canTrial ? ar ? "أو اشترك دلوقتي" : "Or subscribe now" : ar ? "اشترك" : "Subscribe"}</Button>
+        {canTrial && !current ? <>
+          <Button variant="ghost" className="subscription-submit subscription-trial-cta" disabled={!localPrices.ready} onClick={() => setTrialPaying(true)}>
+            <span className="subscription-trial-cta-main">{ar ? "ابدأ ٣ أيام مجانًا" : "Start 3 days free"}</span>
+            <span className="subscription-trial-cta-sub" dir="auto">{(() => { const v = yearly ? localPrices.yearly : localPrices.monthly; const price = v !== null && localPrices.currency ? formatLocalPrice(v, localPrices.currency, ar ? "ar" : "en") : ""; return ar ? `بعدها ${price}${yearly ? "/سنة" : "/شهر"} · إلغاء في أي وقت` : `then ${price}${yearly ? "/yr" : "/mo"} · cancel anytime`; })()}</span>
+          </Button>
+          <Button variant="ghost" className="subscription-secondary" disabled={!localPrices.ready} onClick={() => setPaying(true)}>{ar ? "اشترك دلوقتي من غير تجربة" : "Subscribe now without trial"}</Button>
+        </> : <Button variant="ghost" className="subscription-submit" disabled={current || !localPrices.ready} onClick={() => setPaying(true)}>{current ? ar ? "الخطة الحالية" : "Current plan" : ar ? "اشترك" : "Subscribe"}</Button>}
         <p className="subscription-legal">{ar ? "تُجدد الاشتراكات تلقائيًا حتى الإلغاء. يمكنك الإلغاء في أي وقت. " : "Subscriptions renew automatically until cancelled. Cancel anytime. "}<a href="/subscription-terms">{ar ? "شروط الاشتراك" : "Subscription terms"}</a></p>
       </footer>
       {paying && <Suspense fallback={null}><CheckoutSheet tier={p.id} name={p.name} interval={yearly ? "yearly" : "monthly"} onClose={() => setPaying(false)} /></Suspense>}
