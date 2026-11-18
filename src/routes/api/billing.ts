@@ -49,6 +49,8 @@ export const Route = createFileRoute("/api/billing")({ server: { handlers: {
         case "kashier_wallet": return Response.json(await k.requestKashierWallet(auth.userId, await email(), i.tier, i.interval, i.phone, origin));
         case "kashier_wallet_check": return Response.json(await k.reconcileKashierWallet(auth.userId, i.orderId));
         case "dodo": {
+          const { DODO_ENABLED } = await import("@/lib/payments/regions");
+          if (!DODO_ENABLED) throw new k.PaymentsUnavailable("Dodo is paused");
           const { createDodoCheckout } = await import("@/lib/payments/dodo.server");
           return Response.json(await createDodoCheckout(auth.userId, await email(), i.tier, i.interval, i.country.toUpperCase(), origin));
         }

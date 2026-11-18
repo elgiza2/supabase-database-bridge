@@ -3,8 +3,11 @@ import type { BillingInterval, Tier } from "./plans";
 
 export type WebProvider = "kashier" | "dodo";
 
-/** Egypt pays through Kashier (card + Vodafone Cash in EGP); everyone else through Dodo Payments. */
-export const providerFor = (country: string): WebProvider => (country.toUpperCase() === "EG" ? "kashier" : "dodo");
+/** Dodo Payments is paused: every web country pays through Kashier until the owner re-enables it. */
+export const DODO_ENABLED = false;
+
+/** Egypt pays through Kashier (card + Vodafone Cash in EGP); everyone else through Dodo Payments when enabled. */
+export const providerFor = (country: string): WebProvider => (!DODO_ENABLED || country.toUpperCase() === "EG" ? "kashier" : "dodo");
 
 const LOCAL: Record<string, string[]> = {
   IN: ["UPI", "RuPay"], BR: ["Pix"], NL: ["iDEAL"], BE: ["Bancontact"], AT: ["EPS"], PT: ["Multibanco"],
@@ -16,7 +19,7 @@ const EURO = ["DE", "FR", "IT", "ES", "IE", "FI", "LU", "GR", "SK", "SI", "EE", 
 /** Methods shown to the user for their country (Dodo also filters live on its own page). */
 export function methodsFor(country: string): string[] {
   const c = country.toUpperCase();
-  if (c === "EG") return ["Card", "Vodafone Cash"];
+  if (c === "EG" || !DODO_ENABLED) return ["Card", "Vodafone Cash"];
   const local = LOCAL[c] ?? (EURO.includes(c) ? ["Klarna", "Satispay"] : []);
   const wallets = c === "IN" ? ["Apple Pay"] : ["Apple Pay", "Google Pay"];
   return ["Card", ...wallets, ...local];
