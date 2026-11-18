@@ -320,6 +320,7 @@ export async function runAgentLoop(
     const sid = `${turn}-${step}`;
     let n = 0;
     let dropped = false;
+    let stepTokens = 0;
     for (;;) {
       let chunk: ReadableStreamReadResult<Uint8Array>;
       // A dropped stream surfaces as a raw "fetch failed"; give the user a clear, actionable message instead.
@@ -337,6 +338,7 @@ export async function runAgentLoop(
         let j: any;
         try { j = JSON.parse(data); } catch { continue; }
         if (j.error) throw new Error("The chat model could not complete this reply. Your message is saved.");
+        if (Number.isFinite(j.usage?.total_tokens)) stepTokens = Number(j.usage.total_tokens);
         const d = j.choices?.[0]?.delta ?? {};
         if (d.refusal) throw new Error(d.refusal);
         if (d.reasoning) emit({ id: `${sid}-r${n++}`, type: "agent.reasoning", part: { type: "reasoning", text: d.reasoning, stream_id: `${sid}-r` } });
@@ -352,6 +354,11 @@ export async function runAgentLoop(
       }
     }
     // The model stream dropped mid-step: nothing from this step was shown yet, so redo it (at most twice) instead of failing the reply.
+    // Free-trial daily token limit: provider-reported usage, or a 4-characters-per-token estimate when absent.
+    if (opts.usageOwner) {
+      const estimate = Math.ceil((JSON.stringify(messages).length + text.length + calls.reduce((a, c) => a + c.args.length, 0)) / 4);
+      void (await import("./usage.server")).recordTrialTokens(opts.usageOwner, stepTokens || estimate).catch(() => {});
+    }
     if (dropped) {
       if (streamRetries++ >= 2) throw new Error("The connection dropped for a moment. Send it again and I'll pick up where I left off.");
       await new Promise((r) => setTimeout(r, 1000 * streamRetries));

@@ -56,6 +56,36 @@ export async function createKashierOrder(userId: string, tier: string, interval:
   };
 }
 
+/** Card check that starts the one-time web trial: 1 EGP, card saved so the plan can be charged when the trial ends. */
+export const TRIAL_CHECK_EGP = 1;
+export async function startKashierTrial(userId: string, tier: string, interval: string, origin: string) {
+  if (priceOf(tier, interval) === null) throw new Error("This plan is not available");
+  const { merchantId, apiKey } = await keys();
+  const amount = TRIAL_CHECK_EGP;
+  const currency = "EGP";
+  const orderId = `ceyo_trial_${crypto.randomUUID().replace(/-/g, "")}`;
+  const { error } = await db().rpc("begin_card_trial", { p_user: userId, p_order: orderId, p_tier: tier, p_interval: interval, p_amount: amount });
+  if (error) throw new Error(/already/i.test(error.message) ? error.message : "The free trial could not start");
+  // Saving the card requires the customer reference inside the signed hash.
+  const hash = await hmacHex(apiKey, `/?payment=${merchantId}.${orderId}.${amount}.${currency}.${userId}`);
+  return {
+    orderId, merchantId, amount, currency, hash, endpoint: FEP, saveCard: true as const,
+    webhookUrl: `${origin}/api/public/kashier-webhook`,
+    redirect: `${origin}/settings/plans?order=${orderId}`,
+  };
+}
+
+/** The saved-card reference Kashier returns with a payment made with card.save. */
+export function savedCardFrom(data: Record<string, unknown>) {
+  const any = data as Record<string, any>;
+  const pick = (...values: unknown[]) => values.map((v) => String(v ?? "").trim()).find(Boolean) ?? "";
+  return {
+    token: pick(any.cardDataToken, any.cardToken, any.card?.cardToken, any.response?.paymentMethod?.card?.cardToken),
+    agreement: pick(any.cardAgreementId, any.agreementId, any.agreement?.id),
+    masked: pick(any.maskedCard, any.card?.number, any.response?.paymentMethod?.card?.number),
+  };
+}
+
 async function fep(url: string, method: string, hash: string | null, body: unknown) {
   const headers: Record<string, string> = { "Content-Type": "application/json", Accept: "application/json" };
   if (hash) headers["Kashier-Hash"] = hash;
@@ -117,7 +147,7 @@ export async function handleKashierWebhook(raw: string, signature: string) {
   const orderId = String(data.merchantOrderId ?? "");
   const status = String(data.status ?? "").toUpperCase();
   const ref = String(data.transactionId ?? data.kashierOrderId ?? orderId);
-  const { data: order } = await db().from("payment_orders").select("id,amount,currency,status").eq("id", orderId).maybeSingle();
+  const { data: order } = await db().from("payment_orders").select("id,amount,currency,status,method").eq("id", orderId).maybeSingle();
   if (!order) return { ok: true as const, status: 200 };
   if (status === "SUCCESS") {
     // Amount/currency must match the server-priced order exactly.
@@ -125,9 +155,66 @@ export async function handleKashierWebhook(raw: string, signature: string) {
       await db().from("payment_orders").update({ status: "failed" }).eq("id", orderId).eq("status", "pending");
       return { ok: true as const, status: 200 };
     }
+    // A trial card check never grants a plan: it starts the trial and schedules the first charge.
+    if (order.method === "trial_card") {
+      const card = savedCardFrom(data);
+      await db().rpc("start_card_trial", { p_order: orderId, p_token: card.token, p_agreement: card.agreement, p_masked: card.masked });
+      return { ok: true as const, status: 200 };
+    }
     await db().rpc("settle_payment_order", { p_order: orderId, p_ref: ref });
   } else if (status === "FAILURE" || status === "FAILED") {
     await db().from("payment_orders").update({ status: "failed" }).eq("id", orderId).eq("status", "pending");
   }
   return { ok: true as const, status: 200 };
+}
+
+/** Charge saved cards whose trial or period has ended (called by the private scheduler). */
+export async function chargeDueCards(origin: string) {
+  const { data: due, error } = await db().rpc("claim_due_card_charges");
+  if (error) throw new Error(error.message);
+  const rows = (due ?? []) as { user_id: string; tier: string; interval: string; card_token: string | null; card_agreement_id: string | null }[];
+  if (!rows.length) return [];
+  const { merchantId, apiKey } = await keys();
+  const results: { user: string; ok: boolean }[] = [];
+  for (const row of rows) {
+    const usd = priceOf(row.tier, row.interval);
+    if (!row.card_token || usd === null) {
+      await db().rpc("finish_card_charge", { p_user: row.user_id, p_ok: false, p_error: row.card_token ? "Plan unavailable" : "No saved card" });
+      results.push({ user: row.user_id, ok: false });
+      continue;
+    }
+    const amount = await usdToEgp(usd);
+    const currency = "EGP";
+    const orderId = `ceyo_renew_${crypto.randomUUID().replace(/-/g, "")}`;
+    const ins = await db().from("payment_orders").insert({ id: orderId, user_id: row.user_id, tier: row.tier, interval: row.interval, amount, currency, usd_amount: usd, provider: "kashier", method: "card_renewal" });
+    if (ins.error) { await db().rpc("finish_card_charge", { p_user: row.user_id, p_ok: false, p_error: "Order could not be created" }); continue; }
+    const hash = await hmacHex(apiKey, `/?payment=${merchantId}.${orderId}.${amount}.${currency}.${row.user_id}`);
+    const card: Record<string, unknown> = { enable3DS: false, cardToken: row.card_token };
+    if (row.card_agreement_id) card.agreement = { id: row.card_agreement_id };
+    let res: Awaited<ReturnType<typeof fep>> & { response?: { status?: string; result?: string; transactionId?: string } };
+    try {
+      res = await fep(FEP, "POST", hash, {
+        apiOperation: "PAY", merchantId, interactionSource: "CONTAUTH",
+        paymentMethod: { type: "CARD", card },
+        order: { reference: orderId, amount: String(amount), currency },
+        customer: { reference: row.user_id },
+        serverWebhook: `${origin}/api/public/kashier-webhook`,
+        reconciliation: { webhookUrl: `${origin}/api/public/kashier-webhook` },
+      }) as typeof res;
+    } catch {
+      // Unknown outcome: leave the order pending and the row "charging" for review; never charge twice.
+      results.push({ user: row.user_id, ok: false });
+      continue;
+    }
+    const paid = res.status === "SUCCESS" && (res.response?.result === "SUCCESS" || res.response?.status === "CAPTURED" || res.response?.status === "SUCCESS");
+    if (paid) {
+      await db().rpc("settle_payment_order", { p_order: orderId, p_ref: String(res.response?.transactionId || orderId) });
+      await db().rpc("finish_card_charge", { p_user: row.user_id, p_ok: true, p_error: null });
+    } else {
+      await db().from("payment_orders").update({ status: "failed" }).eq("id", orderId).eq("status", "pending");
+      await db().rpc("finish_card_charge", { p_user: row.user_id, p_ok: false, p_error: String(res.messages?.en || res.message || "Card declined").slice(0, 200) });
+    }
+    results.push({ user: row.user_id, ok: paid });
+  }
+  return results;
 }

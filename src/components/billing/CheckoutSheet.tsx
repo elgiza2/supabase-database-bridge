@@ -36,14 +36,15 @@ const money = (amount: number, currency: string) => {
 };
 const digits = (v: string, n: number) => v.replace(/\D/g, "").slice(0, n);
 
-export function CheckoutSheet({ tier, name, interval, onClose }: { tier: Tier; name: string; interval: BillingInterval; onClose: () => void }) {
+/** `trial`: web only — link a card with a 1 EGP check to start the 3-day free trial; the plan is charged when it ends. */
+export function CheckoutSheet({ tier, name, interval, onClose, trial = false }: { tier: Tier; name: string; interval: BillingInterval; onClose: () => void; trial?: boolean }) {
   const usd = priceOf(tier, interval) ?? 0;
   const ar = false;
   const native = playApi();
   const playNative = isPlayApp();
   const androidBilling = playNative || !!native;
   const [quote, setQuote] = useState<Quote | null>(null);
-  const [chosen, setChosen] = useState(false);
+  const [chosen, setChosen] = useState(trial);
   const [method, setMethod] = useState<"card" | "wallet">("card");
   const [card, setCard] = useState({ number: "", name: "", exp: "", cvv: "" });
   const [phone, setPhone] = useState("");
@@ -142,7 +143,7 @@ export function CheckoutSheet({ tier, name, interval, onClose }: { tier: Tier; n
     try {
       const customerReference = getAuthState().userId;
       if (!customerReference) throw new Error("Please sign in first");
-      const o = await billing<{ orderId: string; merchantId: string; amount: number; currency: string; hash: string; endpoint: string; webhookUrl: string; redirect: string }>({ action: "kashier_card", tier, interval });
+      const o = await billing<{ orderId: string; merchantId: string; amount: number; currency: string; hash: string; endpoint: string; webhookUrl: string; redirect: string; saveCard?: boolean }>({ action: trial ? "trial_start" : "kashier_card", tier, interval });
       // Card details go straight from this device to Kashier; Ceyo's servers never see them.
       const res = await fetch(o.endpoint, { method: "POST", headers: { "Content-Type": "application/json", "Kashier-Hash": o.hash }, body: JSON.stringify(kashierCardPayload(o, card, customerReference, `Ceyo ${name} ${interval}`)) });
       const p = await res.json().catch(() => ({}));
@@ -175,11 +176,11 @@ export function CheckoutSheet({ tier, name, interval, onClose }: { tier: Tier; n
   const total = androidBilling ? `$${usd}` : quote ? money(quote.amount, quote.currency) : "…";
   const busy = state === "loading";
   const kashier = quote?.provider === "kashier";
-  const reset = () => { setChosen(false); setState("idle"); setFrame(""); setError(""); setOrderId(""); };
+  const reset = () => { setChosen(trial); setState("idle"); setFrame(""); setError(""); setOrderId(""); };
   const errorBox = error ? <p role="alert" className="cbox-error">{userErrorText(error)}</p> : null;
-  const heading = state === "paid" ? "Payment complete" : state === "waiting" ? (frame ? "Secure payment" : "Confirming payment") : androidBilling ? "Google Play" : method === "wallet" ? "Vodafone Cash" : "Card details";
+  const heading = trial ? (state === "paid" ? "Free trial started" : state === "waiting" ? (frame ? "Secure card check" : "Checking your card") : "Link your card") : state === "paid" ? "Payment complete" : state === "waiting" ? (frame ? "Secure payment" : "Confirming payment") : androidBilling ? "Google Play" : method === "wallet" ? "Vodafone Cash" : "Card details";
   const content = state === "paid" ? (
-    <div className="cbox-status" role="status"><span className="cbox-success"><Check /></span><h3>You're subscribed</h3><p>Ceyo {name} is now active.</p><Button variant="ghost" className="cbox-cta" onClick={onClose}>Continue</Button></div>
+    <div className="cbox-status" role="status"><span className="cbox-success"><Check /></span><h3>{trial ? "Your free trial has started" : "You're subscribed"}</h3><p>{trial ? `3 days, up to 1,000,000 tokens a day. Ceyo ${name} is charged ${total} when the trial ends unless you cancel.` : `Ceyo ${name} is now active.`}</p><Button variant="ghost" className="cbox-cta" onClick={onClose}>Continue</Button></div>
   ) : state === "waiting" ? (
     <>
       {check === "dodo" && frame ? <InlineDodoCheckout url={frame} /> : check === "db" && frame ? <div className="cbox-embedded"><iframe title="Bank verification" src={frame} allow="payment *" /></div> : <div className="cbox-status" role="status"><Loader2 className="cbox-spin" /><h3>{check === "wallet" ? "Approve on your phone" : "Confirming your payment"}</h3>{check === "wallet" && <p>Request sent to {phone}. Approve in Ana Vodafone or dial *9#.</p>}</div>}
@@ -197,7 +198,8 @@ export function CheckoutSheet({ tier, name, interval, onClose }: { tier: Tier; n
         <Field label={ar ? "تاريخ الانتهاء" : "Expiry"}><input required inputMode="numeric" autoComplete="cc-exp" value={card.exp.replace("/", " / ")} onChange={(e) => { const d = digits(e.target.value, 4); setCard({ ...card, exp: d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d }); }} placeholder="MM / YY" /></Field>
         <Field label="CVV"><input required type="password" inputMode="numeric" autoComplete="cc-csc" value={card.cvv} onChange={(e) => setCard({ ...card, cvv: digits(e.target.value, 4) })} placeholder="•••" /></Field>
       </div>
-      {errorBox}<Button variant="ghost" type="submit" disabled={busy} className="cbox-cta">{busy ? <Loader2 className="cbox-spin" /> : `Subscribe · ${total}`}</Button>
+      {trial && <p className="cbox-note" role="note">We check your card with a 1 EGP payment and your 3-day free trial starts right away. Most features are limited during the trial; full power comes with the subscription. After 3 days, Ceyo {name} is charged {total} automatically. Cancel anytime before then and you pay nothing more.</p>}
+      {errorBox}<Button variant="ghost" type="submit" disabled={busy} className="cbox-cta">{busy ? <Loader2 className="cbox-spin" /> : trial ? "Start free trial" : `Subscribe · ${total}`}</Button>
       <p className="cbox-security"><ShieldCheck /> Secure payment by Kashier</p>
     </form>
   ) : (

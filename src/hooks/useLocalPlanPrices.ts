@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/legacyClient";
 import { convertDisplayPrice, currencyForCountry } from "@/lib/payments/localPrices";
 import type { BillingInterval, Tier } from "@/lib/payments/plans";
 
-type Quote = { country: string; amount: number; currency: string };
+type Quote = { country: string; amount: number; currency: string; usd?: number };
 async function quote(tier: Tier, interval: BillingInterval, signal: AbortSignal): Promise<Quote> {
   const { data } = await supabase.auth.getSession();
   const response = await fetch("/api/billing", {
@@ -33,8 +33,12 @@ export function useLocalPlanPrices(tier: Tier, hasYearly: boolean) {
   const local = (value: Quote | undefined) => {
     if (!value || !currency) return null;
     if (value.currency === currency) return value.amount;
-    if (!rates.data || value.currency !== "USD") return null;
-    try { return convertDisplayPrice(value.amount, currency, rates.data); } catch { return null; }
+    // Charges are in EGP through Kashier; other countries see an indicative local amount from the USD price.
+    const usd = value.currency === "USD" ? value.amount : value.usd;
+    if (typeof usd !== "number" || !Number.isFinite(usd)) return null;
+    if (currency === "USD") return usd;
+    if (!rates.data) return null;
+    try { return convertDisplayPrice(usd, currency, rates.data); } catch { return null; }
   };
   const month = local(monthly.data), year = hasYearly ? local(yearly.data) : null;
   const error = monthly.isError || (hasYearly && yearly.isError) || (needsConversion && (rates.isError || (rates.isSuccess && month === null)));

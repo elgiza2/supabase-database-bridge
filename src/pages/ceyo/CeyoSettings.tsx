@@ -27,6 +27,9 @@ import "@/styles/subscriptions.css";
 import { getAuthState } from "@/lib/authStore";
 import { readPageState, writePageState } from "@/lib/pageStateCache";
 import { useLocalPlanPrices } from "@/hooks/useLocalPlanPrices";
+import { blockedMessage, usageMessageText } from "@/lib/ceyo/usage";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { isPlayApp } from "@/lib/native/playBilling";
 import { formatLocalPrice } from "@/lib/payments/localPrices";
 import { readSetting, saveSetting } from "./settingsStorage";
 import { APP_LANGUAGES } from "@/lib/i18n/bundledLocales";
@@ -214,7 +217,7 @@ function Main({ nav }: { nav: Nav }) {
     <Shell title="Settings" back={() => nav("/")}>
       <Group>
         <MeCard onClick={() => nav("/settings/account")} />
-        <Row label="Usage" value={usage.isPending ? "…" : usage.isError ? "Unavailable" : usage.data?.isPaid ? "Subscribed" : usage.data?.trialActive ? `Free trial · ${usage.trialDays}d left` : "Trial ended"} onClick={() => nav("/settings/usage")} />
+        <Row label="Usage" value={usage.isPending ? "…" : usage.isError ? "Unavailable" : usage.data?.isPaid ? "Subscribed" : usage.data?.trialActive ? `Free trial · ${usage.trialDays}d left` : usage.data && !usage.data.trialUsed ? "Trial not started" : "Trial ended"} onClick={() => nav("/settings/usage")} />
         <Row label="Manage Subscription" onClick={() => nav("/settings/subscription")} />
         <Row label="Storage" sub="Files, memories and cache" onClick={() => nav("/settings/storage")} />
         <Row label="Vault" sub="Saved labels and contact info on this device" onClick={() => nav("/settings/vault")} />
@@ -292,15 +295,16 @@ function Usage({ nav }: { nav: Nav }) {
       {usage.isError && <Group><Row label="Could not load usage" onClick={() => void usage.refetch()} sub="Try again" /></Group>}
       <div className="ceyo-usage-panel">
         <div className="ceyo-usage-body">
-          <div className="ceyo-usage-head"><strong>{usage.data?.isPaid ? "Subscription" : "Free trial"}</strong><span>{usage.data?.isPaid ? "Active" : usage.data?.trialActive ? `${usage.trialDays} of 3 days left` : "3 days, one time"}</span></div>
+          <div className="ceyo-usage-head"><strong>{usage.data?.isPaid ? "Subscription" : "Free trial"}</strong><span>{usage.data?.isPaid ? "Active" : usage.data?.trialActive ? `${usage.trialDays} of 3 days left` : usage.data && !usage.data.trialUsed ? "Link a card to start" : "3 days, one time"}</span></div>
           {!usage.data?.isPaid && <div className="ceyo-bar" role="progressbar" aria-label="Trial days used" aria-valuemin={0} aria-valuemax={3} aria-valuenow={3 - usage.trialDays}><i style={{ width: `${Math.round((3 - usage.trialDays) / 3 * 100)}%` }} /></div>}
-          <span className="ceyo-usage-percent">{usage.isPending ? "…" : usage.isError ? "Unavailable" : usage.data?.isPaid ? "Subscribed" : usage.data?.trialActive && usage.data.trialEndsAt ? `Ends ${new Date(usage.data.trialEndsAt).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}` : "Trial ended"}</span>
+          <span className="ceyo-usage-percent">{usage.isPending ? "…" : usage.isError ? "Unavailable" : usage.data?.isPaid ? "Subscribed" : usage.data?.trialActive && usage.data.trialEndsAt ? `Ends ${new Date(usage.data.trialEndsAt).toLocaleString(undefined, { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })}` : usage.data && !usage.data.trialUsed ? "Not started" : "Trial ended"}</span>
         </div>
       </div>
       <Group title="Plan">
         <Row label="Current plan" value={plan.charAt(0).toUpperCase() + plan.slice(1)} right={<span />} />
       </Group>
-      {usage.exhausted && <p className="ceyo-note" role="alert">{ar ? "خلصت التجربة المجانية (3 أيام). اشترك علشان تكمل." : "Your 3-day free trial has ended. Subscribe to continue."}</p>}
+      {usage.data?.trialActive && <p className="ceyo-note" role="status">{ar ? `استخدام النهارده: ${usage.data.tokensToday.toLocaleString("ar")} من ${usage.data.tokenLimit.toLocaleString("ar")} توكن. معظم المميزات محدودة في التجربة، والقوة الكاملة مع الاشتراك.` : `Today: ${usage.data.tokensToday.toLocaleString()} of ${usage.data.tokenLimit.toLocaleString()} tokens. Most features are limited during the trial; full power comes with the subscription.`}</p>}
+      {usage.exhausted && usage.data && <p className="ceyo-note" role="alert">{usageMessageText(blockedMessage(usage.data), ar)}</p>}
       <Group>
         <Row label={ar ? "اشترك" : "Subscribe"} onClick={() => nav("/settings/plans")} />
         <Row label="Manage subscription" onClick={() => nav("/settings/subscription")} />
@@ -368,9 +372,34 @@ const PLANS = [
   ] },
 ] as const;
 
+type CardBilling = { tier: string; interval: string; status: string; nextChargeAt: string | null; cardLast4: string | null } | null;
+/** Web trial's automatic charge: when it happens, which card, and a cancel button. */
+function useCardBilling() {
+  const owner = getAuthState().userId;
+  return useQuery({ queryKey: ["card-billing", owner], enabled: Boolean(owner), staleTime: 0, queryFn: async () => {
+    const { data, error } = await supabase.rpc("my_card_billing");
+    if (error) throw error;
+    return (data ?? null) as CardBilling;
+  } });
+}
+
 function Plans({ nav }: { nav: Nav }) {
   const navigate = useNavigate();
-  const { plan } = useUsage();
+  const usage = useUsage();
+  const { plan } = usage;
+  const queryClient = useQueryClient();
+  // The web trial (card first) is web-only; the Android app uses Google Play's own trial.
+  const web = !isPlayApp() && !(typeof window !== "undefined" && (window as unknown as { MegsyAndroid?: unknown }).MegsyAndroid);
+  const canTrial = web && !!usage.data && !usage.data.isPaid && !usage.data.trialUsed;
+  const [trialPaying, setTrialPaying] = useState(false);
+  const cardBilling = useCardBilling();
+  const autoCharge = web && cardBilling.data && (cardBilling.data.status === "active" || cardBilling.data.status === "charging") ? cardBilling.data : null;
+  const cancelAutoCharge = async () => {
+    const { error } = await supabase.rpc("cancel_my_card_billing");
+    if (error) { toast.error("Could not cancel. Please try again."); return; }
+    toast.success("Automatic charge cancelled");
+    void queryClient.invalidateQueries({ queryKey: ["card-billing"] });
+  };
   const [tab, setTab] = useState(0);
   const [yearly, setYearly] = useState(false);
   const [paying, setPaying] = useState(false);
@@ -410,18 +439,25 @@ function Plans({ nav }: { nav: Nav }) {
       <footer className="subscription-footer">
         <div className="subscription-trial" role="note">
           <strong>{ar ? "تجربة مجانية ٣ أيام" : "3-day free trial"}</strong>
-          <span>{ar ? "أول ٣ أيام مجانًا للمشترك الجديد. بعدها الاشتراك بيتجدد تلقائيًا بالسعر الظاهر، وتقدر تلغي في أي وقت قبل ما التجربة تخلص من غير ما تدفع حاجة." : "New subscribers get the first 3 days free. After that, the plan renews automatically at the displayed price. Cancel anytime before the trial ends and you pay nothing."}</span>
+          {web ? (
+            <span>{ar ? "اربط بطاقتك الأول (بنتأكد منها بدفع ١ جنيه) والتجربة تبدأ فورًا: لحد مليون توكن مجانًا في اليوم. معظم مميزات التطبيق مش شغالة في التجربة، والقوة الكاملة مع الاشتراك. بعد ٣ أيام بيتخصم سعر الخطة تلقائيًا، وتقدر تلغي في أي وقت قبلها." : "Link your card first (we check it with a 1 EGP payment) and the trial starts right away: up to 1,000,000 tokens free per day. Most app features are not available during the trial; full power comes with the subscription. After 3 days the plan is charged automatically. Cancel anytime before then."}</span>
+          ) : (
+            <span>{ar ? "أول ٣ أيام مجانًا للمشترك الجديد. بعدها الاشتراك بيتجدد تلقائيًا بالسعر الظاهر، وتقدر تلغي في أي وقت قبل ما التجربة تخلص من غير ما تدفع حاجة." : "New subscribers get the first 3 days free. After that, the plan renews automatically at the displayed price. Cancel anytime before the trial ends and you pay nothing."}</span>
+          )}
         </div>
+        {autoCharge && <p className="subscription-legal" role="status">{ar ? `خصم تلقائي ${autoCharge.nextChargeAt ? `يوم ${new Date(autoCharge.nextChargeAt).toLocaleDateString("ar")}` : ""}${autoCharge.cardLast4 ? ` من البطاقة المنتهية بـ ${autoCharge.cardLast4}` : ""}. ` : `Automatic charge${autoCharge.nextChargeAt ? ` on ${new Date(autoCharge.nextChargeAt).toLocaleDateString()}` : ""}${autoCharge.cardLast4 ? ` to the card ending ${autoCharge.cardLast4}` : ""}. `}<Button variant="link" className="h-auto p-0" onClick={() => void cancelAutoCharge()}>{ar ? "إلغاء الخصم التلقائي" : "Cancel automatic charge"}</Button></p>}
         <div className="subscription-intervals" role="group" aria-label="Billing interval">
           <Button variant="ghost" aria-pressed={!yearly} onClick={() => setYearly(false)}><strong dir="auto">{localPrices.monthly !== null && localPrices.currency ? formatLocalPrice(localPrices.monthly, localPrices.currency, ar ? "ar" : "en") : "…"}</strong><span>{ar ? "الفوترة شهريًا" : "Billed monthly"}</span></Button>
           {p.yearly > 0 && <Button variant="ghost" aria-pressed={yearly} onClick={() => setYearly(true)}><strong dir="auto">{localPrices.yearly !== null && localPrices.currency ? formatLocalPrice(localPrices.yearly, localPrices.currency, ar ? "ar" : "en") : "…"}</strong><span>{ar ? "سنويًا · وفر 17%" : "Yearly · Save 17%"}</span></Button>}
         </div>
         {localPrices.error && <Button variant="ghost" onClick={localPrices.retry}>{ar ? "تعذر تحميل السعر · إعادة المحاولة" : "Price unavailable · Retry"}</Button>}
         {localPrices.approximate && localPrices.ready && <p className="subscription-legal">{ar ? "سعر محلي تقريبي؛ المبلغ النهائي يُعرض عند الدفع." : "Approximate local price; final amount shown at checkout."}</p>}
-        <Button variant="ghost" className="subscription-submit" disabled={current || !localPrices.ready} onClick={() => setPaying(true)}>{current ? ar ? "الخطة الحالية" : "Current plan" : ar ? "اشترك" : "Subscribe"}</Button>
+        {canTrial && !current && <Button variant="ghost" className="subscription-submit" disabled={!localPrices.ready} onClick={() => setTrialPaying(true)}>{ar ? "ابدأ التجربة المجانية ٣ أيام" : "Start 3-day free trial"}</Button>}
+        <Button variant="ghost" className={canTrial && !current ? undefined : "subscription-submit"} disabled={current || !localPrices.ready} onClick={() => setPaying(true)}>{current ? ar ? "الخطة الحالية" : "Current plan" : canTrial ? ar ? "أو اشترك دلوقتي" : "Or subscribe now" : ar ? "اشترك" : "Subscribe"}</Button>
         <p className="subscription-legal">{ar ? "تُجدد الاشتراكات تلقائيًا حتى الإلغاء. يمكنك الإلغاء في أي وقت. " : "Subscriptions renew automatically until cancelled. Cancel anytime. "}<a href="/subscription-terms">{ar ? "شروط الاشتراك" : "Subscription terms"}</a></p>
       </footer>
       {paying && <Suspense fallback={null}><CheckoutSheet tier={p.id} name={p.name} interval={yearly ? "yearly" : "monthly"} onClose={() => setPaying(false)} /></Suspense>}
+      {trialPaying && <Suspense fallback={null}><CheckoutSheet trial tier={p.id} name={p.name} interval={yearly ? "yearly" : "monthly"} onClose={() => { setTrialPaying(false); void usage.refetch(); void cardBilling.refetch(); }} /></Suspense>}
     </div>
   );
 }

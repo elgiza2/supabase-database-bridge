@@ -66,3 +66,22 @@ describe("3-day free trial", () => {
     expect(trialDaysLeft({ trialActive: false, trialEndsAt: "2026-11-19T00:00:00Z" }, now)).toBe(0);
   });
 });
+describe("Card-linked web trial limits", () => {
+  afterEach(() => vi.clearAllMocks());
+  it("stops a trial user at the 1,000,000-token daily limit with its own message", async () => {
+    rpc.mockResolvedValue({ data: { ok: false, code: "daily_limit" }, error: null });
+    await expect(chargeUsage("owner", "operation")).rejects.toThrow("1,000,000 free trial tokens");
+  });
+  it("asks a new user to link a card because the trial no longer starts by itself", async () => {
+    rpc.mockResolvedValue({ data: { ok: false, code: "trial_not_started" }, error: null });
+    await expect(chargeUsage("owner", "operation")).rejects.toThrow("linking a card");
+  });
+  it("treats the daily limit as a usage stop (402), not an outage", () => {
+    expect(usageFailure(new Error("You've used today's 1,000,000 free trial tokens. Subscribe for full power or come back tomorrow.")).status).toBe(402);
+  });
+  it("tells a user who never started the trial to link a card", async () => {
+    const db = createClient("https://example.supabase.co", "test");
+    vi.spyOn(db, "rpc").mockResolvedValue({ data: { isPaid: false, hasAccess: false, trialActive: false, trialUsed: false, remainingUsd: 0, stepUsd: 0.01 }, error: null, count: null, status: 200, statusText: "OK" });
+    await expect(checkUsageAvailable(db)).rejects.toThrow("linking a card");
+  });
+});

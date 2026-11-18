@@ -5,6 +5,7 @@ const plan = { tier: z.enum(["plus", "pro", "ultra"]), interval: z.enum(["monthl
 const Body = z.discriminatedUnion("action", [
   z.object({ action: z.literal("quote"), ...plan, tz: z.string().max(64).default("") }),
   z.object({ action: z.literal("kashier_card"), ...plan }),
+  z.object({ action: z.literal("trial_start"), ...plan }),
   z.object({ action: z.literal("kashier_wallet"), ...plan, phone: z.string().min(8).max(20) }),
   z.object({ action: z.literal("kashier_wallet_check"), orderId: z.string().min(5).max(80) }),
   z.object({ action: z.literal("dodo"), ...plan, country: z.string().max(2).default("") }),
@@ -44,9 +45,10 @@ export const Route = createFileRoute("/api/billing")({ server: { handlers: {
           const usd = priceOf(i.tier, i.interval) ?? 0;
           const provider = providerFor(country);
           const local = provider === "kashier" ? { amount: await k.usdToEgp(usd), currency: "EGP" } : { amount: usd, currency: "USD" };
-          return Response.json({ country, provider, methods: methodsFor(country), ...local });
+          return Response.json({ country, provider, methods: methodsFor(country), usd, ...local });
         }
         case "kashier_card": return Response.json(await k.createKashierOrder(auth.userId, i.tier, i.interval, "card", origin));
+        case "trial_start": return Response.json(await k.startKashierTrial(auth.userId, i.tier, i.interval, origin));
         case "kashier_wallet": return Response.json(await k.requestKashierWallet(auth.userId, await email(), i.tier, i.interval, i.phone, origin));
         case "kashier_wallet_check": return Response.json(await k.reconcileKashierWallet(auth.userId, i.orderId));
         case "dodo": {

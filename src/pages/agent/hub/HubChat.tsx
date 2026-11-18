@@ -63,7 +63,7 @@ import { readTextAttachment } from "@/lib/ceyo/content";
 import { saveDocument } from "@/lib/ceyo/resources";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { isUsageExhausted } from "@/lib/ceyo/usage";
+import { isUsageExhausted, usageMessageText } from "@/lib/ceyo/usage";
 
 type Bubble = {
   key: string;
@@ -595,7 +595,7 @@ export function HubChat({
           <span><strong>{toast.title}</strong>{toast.body && <small>{toast.body}</small>}</span>
         </div>
       )}
-      {s.error && <div className="cx-chat-error" role="alert"><CircleAlert size={18} /><span className="min-w-0 flex-1">{isUsageExhausted(s.error) ? ar ? "خلصت التجربة المجانية (3 أيام). اشترك علشان تكمل." : "Your 3-day free trial has ended. Subscribe to continue." : s.error}</span>{isUsageExhausted(s.error) && <Button className="shrink-0 whitespace-nowrap" variant="secondary" size="sm" onClick={() => nav("/settings/plans")}>{ar ? "اشترك" : "Subscribe"}</Button>}</div>}
+      {s.error && <div className="cx-chat-error" role="alert"><CircleAlert size={18} /><span className="min-w-0 flex-1">{isUsageExhausted(s.error) ? usageMessageText(s.error, ar) : s.error}</span>{isUsageExhausted(s.error) && <Button className="shrink-0 whitespace-nowrap" variant="secondary" size="sm" onClick={() => nav("/settings/plans")}>{ar ? "اشترك" : "Subscribe"}</Button>}</div>}
 
       <div
         className="cx-scroll"

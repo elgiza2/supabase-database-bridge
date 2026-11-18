@@ -4,7 +4,9 @@
 - [ ] Build and upload a new APK so the native restore reaches phones (owner).
 - [x] Android app never shows Ceyo's own checkout card; only Google Play's sheet plus a short message.
 - [x] Remove the "Try free for 3 days" line from the sign-in/sign-up screen (verified in browser).
-- [ ] Web 3-day trial: card linked first, 1M tokens/day, clear "limited features, full power with subscription" copy (waiting on owner's answers about the card check and charging after the trial).
+- [x] Web 3-day trial starts only after a 1 EGP Kashier card check that saves the card; 1,000,000 tokens/day during the trial; "most features limited, full power with subscription" copy; automatic charge at trial end and each period (3 daily retries), cancellable on the plans page.
+- [x] Plan prices shown in each customer's local currency (indicative), charged in EGP through Kashier.
+- [ ] Real Kashier test: confirm the card-save field name and that the saved-card charge succeeds (needs a real card on the live site).
 
 ## Power-button assistant with live Vapi voice — 2026-11-16
 - [x] Floating talk card over the current app (no full app) with a native two-way Vapi voice conversation, barge-in and loudspeaker/headset routing.
