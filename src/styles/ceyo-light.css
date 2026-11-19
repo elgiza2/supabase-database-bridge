@@ -279,3 +279,14 @@ html[data-theme="light"] :is(.october-sheet-title, .october-sheet-description) {
 html[data-theme="light"] .october-sheet-close { background: #f0f0f2 !important; color: #1c1c1e !important; }
 /* Muted helper text inside cards and menus stays readable. */
 html[data-theme="light"] :is(.cx-card, .ios-card, .apcard, .hub-profile-card, .ceyo-account-card, [role="menu"]) :is(small, .muted, [class*="sub"], [class*="hint"], [class*="desc"]) { color: #5c5c62 !important; }
+
+/* Review pass: chat header call button matches the other white pills,
+   softer own-message bubble, visible logo, solid settings header. */
+html[data-theme="light"] .cx-head-calls { background: #ffffff !important; border: 1px solid #e3e3e8 !important; box-shadow: 0 1px 3px rgba(0, 0, 0, .06) !important; backdrop-filter: none !important; }
+html[data-theme="light"] .cx-head-calls :is(button, svg) { color: #1c1c1e !important; }
+html[data-theme="light"] .cx-bubble-user { background: #e9e9ee !important; color: #1c1c1e !important; }
+html[data-theme="light"] .cx-bubble-user :is(a, strong, code) { color: inherit !important; }
+html[data-theme="light"] .ceyo-brand-orb { background: #1c1c1e !important; }
+html[data-theme="light"] .agent-hub.ceyo-page .ceyo-top { background: #f2f2f7 !important; position: relative; z-index: 2; }
+html[data-theme="light"] .ceyo-switch:not([data-on="true"]):not([aria-checked="true"]) { background: #d1d1d6 !important; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .06); }
+html[data-theme="light"] .ceyo-switch i { background: #ffffff !important; box-shadow: 0 1px 3px rgba(0, 0, 0, .25) !important; }
