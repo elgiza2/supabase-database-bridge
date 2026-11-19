@@ -190,3 +190,50 @@ html[data-theme="light"] .cx-pill-btn { background: #1c1c1e; color: #ffffff; }
 html[data-theme="light"] .cx-choice-input button:disabled { background: #e4e4e8; color: #8e8e93; }
 html[data-theme="light"] .cx-rec i { background: #1c1c1e; }
 html[data-theme="light"] .ceyo-desktop-welcome > div > * { filter: drop-shadow(0 0 1px rgba(0, 0, 0, .22)) drop-shadow(0 8px 20px rgba(0, 0, 0, .08)); }
+
+/* Soft canvas + white cards: avoids a flat stark-white look. */
+html[data-theme="light"] .agent-hub {
+  --hub-bg: #f5f5f7;
+  --hub-surface: #ffffff;
+  --hub-surface-raised: #ffffff;
+  --hub-surface-soft: #ffffff;
+  --hub-ink: #1c1c1e;
+  --hub-muted: #5c5c62;
+  --hub-faint: #8a8a90;
+  --hub-line: rgba(0, 0, 0, .07);
+  --hub-line-strong: rgba(0, 0, 0, .1);
+  --hub-shadow: 0 6px 20px rgba(0, 0, 0, .07);
+}
+html[data-theme="light"] .agent-hub.ceyo-page,
+html[data-theme="light"] .gx-apps,
+html[data-theme="light"] .gx-create {
+  --st-bg: #f2f2f7;
+  --st-card: #ffffff;
+  --st-card-2: #ececf0;
+  --st-line: rgba(0, 0, 0, .08);
+  --st-muted: #5c5c62;
+  --st-faint: #7c7c82;
+  --ceyo-page-bg: #f2f2f7;
+  --ceyo-card: #ffffff;
+}
+html[data-theme="light"] .ceyo-page:not(.ceyo-plans):not(.subscription-page),
+html[data-theme="light"] .ceyo-page:not(.ceyo-plans):not(.subscription-page) .ceyo-scroll,
+html[data-theme="light"] .gx-apps,
+html[data-theme="light"] .gx-create:not(.ob-bot *) { background: #f2f2f7 !important; }
+html[data-theme="light"] .agent-hub.ceyo-page .ceyo-group > div { background: #ffffff; box-shadow: 0 1px 3px rgba(0, 0, 0, .04); }
+html[data-theme="light"] .agent-hub.ceyo-page .ceyo-group h2 { color: #6b6b70; }
+html[data-theme="light"] .hub-home,
+html[data-theme="light"] .hub-content { background: #f5f5f7; }
+html[data-theme="light"] .hub-search-trigger,
+html[data-theme="light"] .hub-home-bottom > .hub-apps-wrap > .hub-icon-button,
+html[data-theme="light"] .hub-account-button,
+html[data-theme="light"] .hub-home-header .hub-icon-button { background: #ffffff !important; border: 1px solid rgba(0, 0, 0, .08) !important; color: #1c1c1e; box-shadow: 0 4px 14px rgba(0, 0, 0, .06); }
+html[data-theme="light"] .hub-search-trigger { color: #6b6b70; }
+html[data-theme="light"] .hub-hidden-title,
+html[data-theme="light"] .hub-category-title { color: #4a4a50; }
+html[data-theme="light"] .hub-list-row:hover { background: #ffffff; }
+html[data-theme="light"] .ceyo-switch[data-on="true"],
+html[data-theme="light"] .ceyo-switch[aria-checked="true"] { background: #34c759 !important; }
+html[data-theme="light"] .ceyo-switch:not([data-on="true"]):not([aria-checked="true"]) { background: #d9d9de !important; }
+html[data-theme="light"] .cx-chat { --cx-bg: #f7f7f9; --cx-card: #ffffff; }
+html[data-theme="light"] .cx-composer { background: #ffffff; box-shadow: 0 4px 16px rgba(0, 0, 0, .06); }
