@@ -1,3 +1,4 @@
+import { getCachedUser } from "@/lib/cachedUser";
 import { askConfirm, askText } from "@/components/common/CeyoConfirm";
 import { toast } from "sonner";
 /** Grok-style home for Ceyo bots and multi-bot groups, backed by real AgentSky chats. */
@@ -120,9 +121,8 @@ export default function AgentHubPage({ demo = false }: { demo?: boolean }) {
   useEffect(() => {
     if (demo) return;
     let active = true;
-    void supabase.auth.getUser().then(({ data }) => {
+    void getCachedUser().then((u) => {
       if (!active) return;
-      const u = data.user;
       setUserId(u?.id || "device");
       const meta = (u?.user_metadata || {}) as Record<string, string>;
       setUserAvatar(meta.avatar_url || meta.picture || meta.photo_url || "");

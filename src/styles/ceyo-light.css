@@ -237,3 +237,11 @@ html[data-theme="light"] .ceyo-switch[aria-checked="true"] { background: #34c759
 html[data-theme="light"] .ceyo-switch:not([data-on="true"]):not([aria-checked="true"]) { background: #d9d9de !important; }
 html[data-theme="light"] .cx-chat { --cx-bg: #f7f7f9; --cx-card: #ffffff; }
 html[data-theme="light"] .cx-composer { background: #ffffff; box-shadow: 0 4px 16px rgba(0, 0, 0, .06); }
+
+/* Wallet follows the light theme. */
+html[data-theme="light"] .wl { --wl-bg: #f2f2f7; --wl-card: #ffffff; --wl-line: rgba(0, 0, 0, .09); --wl-fg: #1c1c1e; --wl-mute: #6b6b70; --wl-accent: hsl(252 70% 62%); color-scheme: light; }
+html[data-theme="light"] .wl-pill-on { color: #ffffff; }
+html[data-theme="light"] .wl-card { box-shadow: 0 1px 3px rgba(0, 0, 0, .04); }
+html[data-theme="light"] .wl-bigchart .wl-stop-b { stop-color: #f2f2f7; }
+html[data-theme="light"] .subscription-page .subscription-footer { background: #ffffff !important; border-top: 1px solid #ececf0; box-shadow: 0 -8px 24px rgba(0, 0, 0, .04); }
+html[data-theme="light"] .subscription-page .subscription-intervals > button { background: #ffffff; }

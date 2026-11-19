@@ -1,3 +1,4 @@
+import { getCachedUser } from "@/lib/cachedUser";
 /**
  * @doc Sidebar task indicators.
  *
@@ -33,9 +34,7 @@ export function useTaskIndicators(): Record<string, TaskIndicator> {
 
     const load = async () => {
       try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+        const user = await getCachedUser();
         if (!user || cancelled) return;
         const since = new Date(Date.now() - RECENT_DONE_MS).toISOString();
         const { data } = await supabase

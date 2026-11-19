@@ -1,3 +1,4 @@
+import { getCachedUser } from "@/lib/cachedUser";
 import { useEffect, useRef } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -112,8 +113,7 @@ export default function BackgroundJobNotifier() {
     };
 
     const start = async () => {
-      const { data } = await supabase.auth.getUser();
-      userId = data.user?.id ?? null;
+      userId = (await getCachedUser())?.id ?? null;
       if (!userId || cancelled) return;
 
       // Seed `seen` with what already finished so we don't replay old work.

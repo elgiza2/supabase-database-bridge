@@ -289,3 +289,9 @@
 .ag-plan-todo{flex:none;margin-top:2px;width:16px;height:16px;border-radius:99px;border:1.5px solid var(--ag-muted);opacity:.5}
 .ag-plan-live{flex:none;margin-top:2px;width:16px;height:16px;border-radius:99px;border:2px solid var(--ag-soft);border-top-color:var(--ag-c1);animation:spin .9s linear infinite}
 @keyframes ag-pop{0%{transform:scale(.4);opacity:0}100%{transform:scale(1);opacity:1}}
+
+/* Performance: hidden layers don't animate, and small list avatars stay still. */
+.ag-orb__wave i, .ag-orb__dots { animation-play-state: paused; }
+.ag-orb[data-state="thinking"] .ag-orb__wave i { animation-play-state: running; }
+.ag-orb:not([data-state="thinking"]) .ag-orb__wave i, .ag-orb__dots { animation: none; }
+:is(.hub-list-row, .hub-row-avatars, .hub-group-avatar, .hub-agent-message-avatar, .hub-chat-identity) .ag-orb:not([data-state="thinking"]):not([data-state="tool"]):not([data-state="talking"]) :is(.ag-orb__body, .ag-orb__eye) { animation: none; }
