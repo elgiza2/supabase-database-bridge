@@ -308,3 +308,7 @@ html[data-theme="light"] :is(.gx-create, .ceyo-page) :is(textarea, input[type="t
 .pp-result > :first-child { flex: none !important; width: 32px; }
 .pp-result > span { flex: 1 1 auto !important; }
 html[data-theme="light"] .gx-create input:not([type]) { background: #ffffff !important; border: 1px solid #e3e3e8 !important; }
+html[data-theme="light"] :is(.cx-sub, .cx-profile, .cx-edit) { background: #f2f2f7 !important; }
+html[data-theme="light"] .cx-sub :is(h1, h2, header strong) { color: #1c1c1e; font-weight: 600; }
+html[data-theme="light"] .cx-sub :is(p, small) { color: #5c5c62; }
+html[data-theme="light"] .cx-sub-head { background: #f2f2f7 !important; }
