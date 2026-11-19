@@ -410,6 +410,7 @@ bunx vitest run
 ## Current work
 
 ### Light theme and translation — 2026-11-18
+- Color sweep: light tokens for info pages, Vault, chat previews and widgets; readable home avatar, + and apps menus, search screen, bottom search bars, app count, own chat bubbles (dark bubble, white text), code blocks/tables. Automated contrast scan of home, settings, info pages, search, menus, bot and group chat: no unreadable text left in light; dark unchanged.
 - Light theme now covers home, settings, Vault and chat with a pure white page background (src/styles/ceyo-light.css, loaded last). White bots keep a soft outline on white.
 - Translation: home and settings are no longer blocked from translation (chat bubbles still are); ~100 missing settings/home labels added for Egyptian Arabic and all 24 bundled languages; non-Arabic scanning now includes span/p/small/strong/li/time; Arabic handles short dates, permissions summary and trial countdown.
 - Sweep: plans page and payment sheet now follow light theme; ~400 more labels (account, plans, apps categories and featured app descriptions, memory import, feedback, agent computer, chat/group/bot-editor/checkout hints) added for all languages; the word DELETE stays literal in every language.
