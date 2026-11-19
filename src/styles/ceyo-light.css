@@ -246,3 +246,36 @@ html[data-theme="light"] .wl-bigchart .wl-stop-b { stop-color: #f2f2f7; }
 html[data-theme="light"] .subscription-page .subscription-footer { background: #ffffff !important; border-top: 1px solid #ececf0; box-shadow: 0 -8px 24px rgba(0, 0, 0, .04); }
 html[data-theme="light"] .subscription-page .subscription-intervals > button { background: #ffffff; }
 html[data-theme="light"] .wl { box-shadow: 0 0 0 100vmax var(--wl-bg); clip-path: inset(0 -100vmax); }
+
+/* Unified light surfaces: every menu, sheet and card is white with a soft
+   border and shadow; text inside is dark and readable. */
+html[data-theme="light"] :is(.mobile-plus-glass-menu, .chat-options-glass-menu, .mobile-more-glass-menu, .hub-row-menu, .unified-menu-surface, .hub-menu, .hub-history-menu, .plus-settings-menu, .ceyo-vault-menu, .ios26-glass-menu, .gemini-plus-menu, .gemini-mobile-plus-sheet, .glass-sheet-content, .megsy-october-sheet, .wl-sheet, .gx-sheet, .cx-sheet, [role="menu"], [role="dialog"], [data-radix-popper-content-wrapper] > *) {
+  background: #ffffff !important;
+  color: #1c1c1e !important;
+  border: 1px solid #e3e3e8 !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, .12), 0 2px 6px rgba(0, 0, 0, .05) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+html[data-theme="light"] :is(.mobile-plus-glass-menu, .chat-options-glass-menu, .mobile-more-glass-menu, .hub-row-menu, .unified-menu-surface, .hub-menu, .hub-history-menu, .plus-settings-menu, .ceyo-vault-menu, .ios26-glass-menu, .gemini-plus-menu, .gemini-mobile-plus-sheet, [role="menu"]) :is(button, a, [role="menuitem"]) {
+  color: #1c1c1e !important;
+  background: transparent;
+}
+html[data-theme="light"] :is(.mobile-plus-glass-menu, .chat-options-glass-menu, .mobile-more-glass-menu, .hub-row-menu, .unified-menu-surface, .hub-menu, .hub-history-menu, .plus-settings-menu, .ceyo-vault-menu, .ios26-glass-menu, .gemini-plus-menu, [role="menu"]) :is(button, a, [role="menuitem"]):hover {
+  background: #f2f2f5 !important;
+}
+html[data-theme="light"] :is(.mobile-plus-glass-menu, .chat-options-glass-menu, .mobile-more-glass-menu, .hub-row-menu, .unified-menu-surface, .hub-menu, .hub-history-menu, .plus-settings-menu, .ceyo-vault-menu, .ios26-glass-menu, .gemini-plus-menu, .gemini-mobile-plus-sheet, [role="menu"], .cx-sheet, .gx-sheet) svg { color: #3a3a3f; }
+html[data-theme="light"] :is(.step-card, .composer-card, .ceyo-plans-card, .desktop-fastshot-card, .tier-menu-card, .hub-profile-card, .cfd-card, .ios-card, .glass-panel, .ceyo-account-card, .apcard, .ms-card, .cx-audio-panel, .ceyo-usage-panel, .ceyo-card, .cc-card, .ag-card, .hub-form-card, .ceyo-confirm-card, .pp-panel, .wcard) {
+  background: #ffffff !important;
+  color: #1c1c1e !important;
+  border-color: #e3e3e8 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .05) !important;
+  backdrop-filter: none !important;
+}
+html[data-theme="light"] :is(.apcard-args, .apcard-status, .ios-card-row + .ios-card-row) { border-color: #ececf0 !important; }
+html[data-theme="light"] .apcard-args { background: #f5f5f7 !important; color: #3a3a3f !important; }
+html[data-theme="light"] :is(.october-sheet-handle) { background: #d1d1d6 !important; }
+html[data-theme="light"] :is(.october-sheet-title, .october-sheet-description) { color: #1c1c1e !important; }
+html[data-theme="light"] .october-sheet-close { background: #f0f0f2 !important; color: #1c1c1e !important; }
+/* Muted helper text inside cards and menus stays readable. */
+html[data-theme="light"] :is(.cx-card, .ios-card, .apcard, .hub-profile-card, .ceyo-account-card, [role="menu"]) :is(small, .muted, [class*="sub"], [class*="hint"], [class*="desc"]) { color: #5c5c62 !important; }
