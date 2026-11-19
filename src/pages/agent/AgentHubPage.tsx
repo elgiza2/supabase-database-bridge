@@ -21,7 +21,6 @@ import {
   Search,
   Wallet,
   MoreHorizontal,
-  Phone,
 } from "lucide-react";
 import SEOHead from "@/components/common/SEOHead";
 import { Button } from "@/components/ui/button";
@@ -436,7 +435,6 @@ export default function AgentHubPage({ demo = false }: { demo?: boolean }) {
             <div className="hub-menu hub-apps-menu" role="menu">
               <button type="button" role="menuitem" onClick={() => { setAppsOpen(false); nav("/settings/apps"); }}><Grid2x2Plus size={20} />{ar ? "التكاملات" : "Integrations"}</button>
               <button type="button" role="menuitem" onClick={() => { setAppsOpen(false); nav("/wallet"); }}><Wallet size={20} />{ar ? "المحفظة" : "Wallet"}</button>
-              <button type="button" role="menuitem" onClick={() => { setAppsOpen(false); nav("/settings/phone"); }}><Phone size={20} />{ar ? "رقم الهاتف" : "Phone number"}</button>
             </div>
           )}
         </div>

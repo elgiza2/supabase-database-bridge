@@ -83,6 +83,8 @@ const patterns: Array<[RegExp, (m: RegExpMatchArray) => string]> = [
   [/^Auto-review (on|off) · (\d+) rules?$/, (m) => `المراجعة التلقائية ${m[1] === "on" ? "شغالة" : "مقفولة"} · ${m[2]} قاعدة`],
   // "Free trial · 2d left"
   [/^Free trial · (\d+)d left$/, (m) => `تجربة مجانية · فاضل ${m[1]} يوم`],
+  // "Hello, Akoya" (desktop welcome)
+  [/^Hello, (.+)$/, (m) => `أهلاً، ${m[1]}`],
   // "Open Dev" (row aria-labels)
   [/^Open (.+)$/, (m) => `افتح ${DICT[m[1]] || m[1]}`],
   // "800 points to go — about 80 more friends."

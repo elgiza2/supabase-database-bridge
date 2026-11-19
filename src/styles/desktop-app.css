@@ -38,4 +38,4 @@
   .ceyo-app-frame .cx-composer-wrap { left:24px; right:24px; max-width:820px; margin-inline:auto; }
   .ceyo-app-frame .cx-chat .cx-composer { background:var(--desktop-surface); backdrop-filter:none; box-shadow:none; border:1px solid var(--desktop-line); }
   html:not([data-app-copy-restricted]) .cx-bubble { user-select:text; -webkit-user-select:text; -webkit-touch-callout:default; }
-}html[data-theme="light"] .ceyo-app-frame { --desktop-bg: oklch(.97 0 0); --desktop-surface: oklch(.93 0 0); --desktop-ink: oklch(.18 0 0); --desktop-muted: oklch(.45 0 0); --desktop-line: oklch(0 0 0 / 9%); }
+}html[data-theme="light"] .ceyo-app-frame { --desktop-bg: oklch(1 0 0); --desktop-surface: oklch(.96 0 0); --desktop-ink: oklch(.18 0 0); --desktop-muted: oklch(.45 0 0); --desktop-line: oklch(0 0 0 / 9%); }

@@ -177,3 +177,16 @@ html[data-theme="light"] .hub-search-overlay .hub-search-bottom > svg { color: #
 
 /* Formatted answers and info pages. */
 html[data-theme="light"] .cx-md em { color: #6e6e73; }
+
+/* Chat header pills on wide screens and question cards in answers. */
+html[data-theme="light"] .cx-glass { background: rgba(244, 244, 246, .92) !important; border-color: rgba(0, 0, 0, .08) !important; color: #1c1c1e; }
+html[data-theme="light"] .cx-card { color: #1c1c1e; border-color: rgba(0, 0, 0, .06); }
+html[data-theme="light"] .cx-choice { color: #1c1c1e; }
+html[data-theme="light"] .cx-choice-n { background: #e4e4e8; color: #3a3a3c; }
+html[data-theme="light"] .cx-choice-input { background: #ffffff; border: 1px solid #e2e2e6; }
+html[data-theme="light"] .cx-choice-input input { color: #1c1c1e; }
+html[data-theme="light"] .cx-choice-input button,
+html[data-theme="light"] .cx-pill-btn { background: #1c1c1e; color: #ffffff; }
+html[data-theme="light"] .cx-choice-input button:disabled { background: #e4e4e8; color: #8e8e93; }
+html[data-theme="light"] .cx-rec i { background: #1c1c1e; }
+html[data-theme="light"] .ceyo-desktop-welcome > div > * { filter: drop-shadow(0 0 1px rgba(0, 0, 0, .22)) drop-shadow(0 8px 20px rgba(0, 0, 0, .08)); }

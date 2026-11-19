@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Bot, Grid2x2Plus, Wallet, Phone, Settings, Star, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { Bot, Grid2x2Plus, Wallet, Settings, Star, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import '@/styles/desktop-app.css';
@@ -8,7 +8,6 @@ const destinations = [
   { label: 'Workspace', path: '/', icon: Bot },
   { label: 'Integrations', path: '/settings/apps', icon: Grid2x2Plus },
   { label: 'Wallet', path: '/wallet', icon: Wallet },
-  { label: 'Phone', path: '/settings/phone', icon: Phone },
   { label: 'Plans', path: '/settings/plans', icon: Star },
   { label: 'Settings', path: '/settings', icon: Settings },
 ];
