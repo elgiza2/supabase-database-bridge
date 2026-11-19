@@ -245,3 +245,4 @@ html[data-theme="light"] .wl-card { box-shadow: 0 1px 3px rgba(0, 0, 0, .04); }
 html[data-theme="light"] .wl-bigchart .wl-stop-b { stop-color: #f2f2f7; }
 html[data-theme="light"] .subscription-page .subscription-footer { background: #ffffff !important; border-top: 1px solid #ececf0; box-shadow: 0 -8px 24px rgba(0, 0, 0, .04); }
 html[data-theme="light"] .subscription-page .subscription-intervals > button { background: #ffffff; }
+html[data-theme="light"] .wl { box-shadow: 0 0 0 100vmax var(--wl-bg); clip-path: inset(0 -100vmax); }
