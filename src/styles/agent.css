@@ -294,4 +294,3 @@
 .ag-orb__wave i, .ag-orb__dots { animation-play-state: paused; }
 .ag-orb[data-state="thinking"] .ag-orb__wave i { animation-play-state: running; }
 .ag-orb:not([data-state="thinking"]) .ag-orb__wave i, .ag-orb__dots { animation: none; }
-:is(.hub-list-row, .hub-row-avatars, .hub-group-avatar, .hub-agent-message-avatar, .hub-chat-identity) .ag-orb:not([data-state="thinking"]):not([data-state="tool"]):not([data-state="talking"]) :is(.ag-orb__body, .ag-orb__eye) { animation: none; }
