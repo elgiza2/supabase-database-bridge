@@ -265,7 +265,7 @@ html[data-theme="light"] :is(.mobile-plus-glass-menu, .chat-options-glass-menu, 
   background: #f2f2f5 !important;
 }
 html[data-theme="light"] :is(.mobile-plus-glass-menu, .chat-options-glass-menu, .mobile-more-glass-menu, .hub-row-menu, .unified-menu-surface, .hub-menu, .hub-history-menu, .plus-settings-menu, .ceyo-vault-menu, .ios26-glass-menu, .gemini-plus-menu, .gemini-mobile-plus-sheet, [role="menu"], .cx-sheet, .gx-sheet) svg { color: #3a3a3f; }
-html[data-theme="light"] :is(.step-card, .composer-card, .ceyo-plans-card, .desktop-fastshot-card, .tier-menu-card, .hub-profile-card, .cfd-card, .ios-card, .glass-panel, .ceyo-account-card, .apcard, .ms-card, .cx-audio-panel, .ceyo-usage-panel, .ceyo-card, .cc-card, .ag-card, .hub-form-card, .ceyo-confirm-card, .pp-panel, .wcard) {
+html[data-theme="light"] :is(.step-card, .composer-card, .ceyo-plans-card, .desktop-fastshot-card, .tier-menu-card, .hub-profile-card, .cfd-card, .ios-card, .glass-panel, .ceyo-account-card, .apcard, .ms-card, .cx-audio-panel, .ceyo-usage-panel, .ceyo-card, .cc-card, .ag-card, .hub-form-card, .ceyo-confirm-card, .wcard) {
   background: #ffffff !important;
   color: #1c1c1e !important;
   border-color: #e3e3e8 !important;
@@ -290,3 +290,21 @@ html[data-theme="light"] .ceyo-brand-orb { background: #1c1c1e !important; }
 html[data-theme="light"] .agent-hub.ceyo-page .ceyo-top { background: #f2f2f7 !important; position: relative; z-index: 2; }
 html[data-theme="light"] .ceyo-switch:not([data-on="true"]):not([aria-checked="true"]) { background: #d1d1d6 !important; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .06); }
 html[data-theme="light"] .ceyo-switch i { background: #ffffff !important; box-shadow: 0 1px 3px rgba(0, 0, 0, .25) !important; }
+
+/* Bot profile/edit/sub pages sit outside .cx-chat, so give them the light card colors too. */
+html[data-theme="light"] :is(.cx-profile, .cx-edit, .cx-sub) { --cx-bg: #f2f2f7; --cx-card: #ffffff; --cx-card2: #ececf0; --cx-line: rgba(0, 0, 0, .08); --cx-mute: #6b6b70; color: #1c1c1e; }
+html[data-theme="light"] :is(.cx-profile, .cx-edit, .cx-sub) .cx-card { background: #ffffff !important; color: #1c1c1e !important; border: 1px solid #e3e3e8; box-shadow: 0 1px 3px rgba(0, 0, 0, .05); }
+html[data-theme="light"] :is(.cx-profile, .cx-edit, .cx-sub) .cx-card :is(button, span, svg) { color: #1c1c1e; }
+html[data-theme="light"] :is(.cx-profile, .cx-edit, .cx-sub) .cx-card :is(small, em, b) { color: #6b6b70; }
+/* New group / new message: tidy rows and fields. */
+.pp-field { flex: none; min-height: 48px; }
+.pp-result { justify-content: flex-start !important; width: 100%; }
+.pp-result > span { align-items: flex-start; text-align: start; }
+html[data-theme="light"] .pp-field { background: #ffffff; border: 1px solid #e3e3e8; }
+html[data-theme="light"] .pp-result[data-on="true"] { background: #ffffff; box-shadow: 0 1px 3px rgba(0, 0, 0, .06); }
+html[data-theme="light"] .pp-result .hub-bot-avatar, html[data-theme="light"] .pp-result > :first-child { filter: drop-shadow(0 1px 2px rgba(0, 0, 0, .18)); }
+/* Text areas in create/import screens: plain white. */
+html[data-theme="light"] :is(.gx-create, .ceyo-page) :is(textarea, input[type="text"]) { background: #ffffff !important; color: #1c1c1e !important; border: 1px solid #e3e3e8 !important; }
+.pp-result > :first-child { flex: none !important; width: 32px; }
+.pp-result > span { flex: 1 1 auto !important; }
+html[data-theme="light"] .gx-create input:not([type]) { background: #ffffff !important; border: 1px solid #e3e3e8 !important; }
