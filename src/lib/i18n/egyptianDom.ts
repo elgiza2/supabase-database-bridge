@@ -81,6 +81,8 @@ const patterns: Array<[RegExp, (m: RegExpMatchArray) => string]> = [
   [/^([A-Za-z]{3,9}) (\d{1,2})$/, (m) => (MONTHS[m[1]] ? `${m[2]} ${MONTHS[m[1]]}` : m[0])],
   // "Auto-review on · 0 rules" (permissions summary)
   [/^Auto-review (on|off) · (\d+) rules?$/, (m) => `المراجعة التلقائية ${m[1] === "on" ? "شغالة" : "مقفولة"} · ${m[2]} قاعدة`],
+  // "Message Dev" (composer placeholder)
+  [/^Message (?!sent$|credits$|actions)(.+)$/, (m) => `ابعت رسالة لـ ${m[1]}`],
   // "Free trial · 2d left"
   [/^Free trial · (\d+)d left$/, (m) => `تجربة مجانية · فاضل ${m[1]} يوم`],
   // "Hello, Akoya" (desktop welcome)
@@ -208,6 +210,8 @@ const walk = (root: Node) => {
   }
   if (root.nodeType !== Node.ELEMENT_NODE) return;
   const el = root as Element;
+  // A message box's hint is interface text; its typed value is never touched.
+  if (el.tagName === "TEXTAREA") { translateAttrs(el); return; }
   if (SKIP_TAGS.has(el.tagName)) return;
 
   translateAttrs(el);

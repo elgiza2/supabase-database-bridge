@@ -30,7 +30,9 @@ export function startInterfaceTranslation(language: AuthLang): () => void {
       }
     }
     document.body.querySelectorAll("[placeholder], [aria-label], [title]").forEach(element => {
-      if (element.closest(PRIVATE)) return;
+      // A message box's own hint ("Message Dev") is interface text; what the user typed is not touched.
+      const host = element.matches("textarea") ? element.parentElement : element;
+      if (!host || host.closest(PRIVATE)) return;
       for (const attribute of ["placeholder", "aria-label", "title"]) {
         const current = element.getAttribute(attribute);
         if (!current) continue;

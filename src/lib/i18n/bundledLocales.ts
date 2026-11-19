@@ -45,5 +45,30 @@ export function normalizeAppLanguage(code: string): AppLanguage | null {
   return APP_LANGUAGES.find(([key]) => key === value.split("-")[0])?.[0] ?? null;
 }
 export function bundledText(text: string, language: string): string {
-  return BUNDLED_DICTIONARIES[language]?.[text] || text;
+  const hit = BUNDLED_DICTIONARIES[language]?.[text];
+  if (hit) return hit;
+  return bundledPattern(text, language) || text;
+}
+
+// Interface strings that embed a name or a number ("Message Dev",
+// "Auto-review on · 2 rules") cannot be exact dictionary keys.
+const AUTO_REVIEW: Record<string, [string, string]> = {
+  bn: ["স্বয়ংক্রিয় পর্যালোচনা", "নিয়ম"], de: ["Automatische Prüfung", "Regeln"], es: ["Revisión automática", "reglas"],
+  fa: ["بازبینی خودکار", "قانون"], fr: ["Vérification automatique", "règles"], hi: ["स्वचालित समीक्षा", "नियम"],
+  id: ["Tinjauan otomatis", "aturan"], it: ["Revisione automatica", "regole"], ja: ["自動レビュー", "件のルール"],
+  ko: ["자동 검토", "개 규칙"], ms: ["Semakan automatik", "peraturan"], nl: ["Automatische controle", "regels"],
+  pl: ["Automatyczny przegląd", "reguł"], pt: ["Revisão automática", "regras"], ru: ["Автопроверка", "правил"],
+  sv: ["Automatisk granskning", "regler"], sw: ["Ukaguzi wa kiotomatiki", "sheria"], th: ["ตรวจสอบอัตโนมัติ", "กฎ"],
+  tr: ["Otomatik inceleme", "kural"], uk: ["Автоперевірка", "правил"], ur: ["خودکار جائزہ", "قواعد"],
+  vi: ["Tự động xem xét", "quy tắc"], "zh-CN": ["自动审核", "条规则"], "zh-TW": ["自動審核", "條規則"],
+};
+function bundledPattern(text: string, language: string): string | null {
+  const dict = BUNDLED_DICTIONARIES[language];
+  if (!dict) return null;
+  const message = /^Message (.+?)(…)?$/.exec(text);
+  if (message && dict.Message) return `${dict.Message} ${message[1]}${message[2] || ""}`;
+  const review = /^Auto-review (on|off) · (\d+) rules?$/.exec(text);
+  const words = AUTO_REVIEW[language];
+  if (review && words) return `${words[0]}: ${dict[review[1] === "on" ? "On" : "Off"] || review[1]} · ${review[2]} ${words[1]}`;
+  return null;
 }

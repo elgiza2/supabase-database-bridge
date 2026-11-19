@@ -21,3 +21,12 @@ describe("interface localization privacy", () => {
     expect(document.querySelector("input")?.placeholder).toBe("Settings");
   });
 });
+import { bundledText } from "@/lib/i18n/bundledLocales";
+describe("phrases with names and numbers", () => {
+  it("translates the message box hint with the bot name", () => {
+    expect(bundledText("Message Dev", "de")).toBe("Nachricht Dev");
+  });
+  it("translates the permissions summary", () => {
+    expect(bundledText("Auto-review on · 0 rules", "fr")).toBe("Vérification automatique: Activé · 0 règles");
+  });
+});
